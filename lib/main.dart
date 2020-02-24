@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'pulled.dart';
+import 'discover.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyDiscoverPage(),
     );
   }
 }
@@ -37,7 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             decoration: new BoxDecoration(
               image: new DecorationImage(
-                image: new AssetImage("Parasite-poster-2.jpg"),
+                //image: new AssetImage("Parasite-poster-2.jpg"),
+                image: new AssetImage("lalaland1.jpg"),
+                //image: new AssetImage("parasite1.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
@@ -45,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
               filter: new ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0,),
               child: new Container(
                 decoration: new BoxDecoration(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withOpacity(0.3),
                 ),
               ),
             ),
@@ -67,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "SeeNext",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 50.0),
+                                TextStyle(color: Colors.white, fontSize: 60.0),
                           ),
                         ),
 
@@ -83,8 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         FlatButton(
-                          color: Colors.black,
+                          color: Colors.blue,
                           textColor: Colors.white,
+
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
                           //padding: EdgeInsets.all(16.0),
@@ -101,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         FlatButton(
-                          color: Colors.black,
+                          color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
@@ -110,6 +115,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("Search by preferences activated.");
+                            setState(() {
+
+                            });
+
                           },
                           child: Column(
                             children: <Widget>[
@@ -137,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         FlatButton(
-                          color: Colors.black,
+                          color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
@@ -156,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         Text(""),
                         FlatButton(
-                          color: Colors.black,
+                          color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,

@@ -19,6 +19,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_multiselect: 0.0.1
+  multiselect_formfield: ^0.1.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -43,6 +45,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - Parasite-poster-2.jpg
+    - lalaland1.jpg
+    - parasite1.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
