@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
+import 'main.dart';
 import 'package:flutter_multiselect/flutter_multiselect.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 
@@ -68,7 +69,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
             child: Column(
               children: <Widget>[
                 Expanded(
-                  flex: 1,
+                  flex: 10,
                   child: Container(
                     padding: EdgeInsets.only(top: 36, bottom: 12),
                     child: Text(
@@ -80,7 +81,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 20,
                   child: Container(
                     padding: EdgeInsets.all(9),
                     child: Container(
@@ -181,74 +182,104 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
 //                ),
 //              ),
                 Expanded(
-                  flex: 1,
+                  flex: 8,
                   child: Container(
-                    color: Colors.white,
+                    color: Colors.pinkAccent,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text('Highest MPAA Rating? '),
-                        DropdownButton(
-                          value: dropdownValues,
-                          isDense: true,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              dropdownValues = newValue;
-                            });
-                          },
-                          items: ['G', 'PG', 'PG-13', 'R', 'NC-17']
-                              .map((String value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        Text(
+                          'Highest MPAA Rating? ',
+                          style: TextStyle(
+                            fontSize: 20.0, // insert your font size here
+                          ),
+                        ),
+                        DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton(
+                              value: dropdownValues,
+                              isDense: true,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  dropdownValues = newValue;
+                                });
+                              },
+                              items: ['G', 'PG', 'PG-13', 'R', 'NC-17']
+                                  .map((String value) {
+                                return DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 8,
                   child: Container(
-                    color: Colors.white,
+                    color: Colors.pinkAccent,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text('Film Length? '),
-                        DropdownButton(
-                          value: filmLength,
-                          isDense: true,
-                          onChanged: (String anotherValue) {
-                            setState(() {
-                              filmLength = anotherValue;
-                            });
-                          },
-                          items: [
-                            '< 90 mins',
-                            '< 120 mins',
-                            '< 150 mins',
-                            '150 mins'
-                          ].map((String value) {
-                            return DropdownMenuItem(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                        Text(
+                          'Film Length? ',
+                          style: TextStyle(
+                            fontSize: 20.0, // insert your font size here
+                          ),
+                        ),
+                        DropdownButtonHideUnderline(
+                          child: ButtonTheme(
+                            alignedDropdown: true,
+                            child: DropdownButton(
+                              value: filmLength,
+                              isDense: true,
+                              onChanged: (String anotherValue) {
+                                setState(() {
+                                  filmLength = anotherValue;
+                                });
+                              },
+                              items: [
+                                '< 90 mins',
+                                '< 120 mins',
+                                '< 150 mins',
+                                '150 mins'
+                              ].map((String value) {
+                                return DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
 
-                Text("How much do you care abouta film's... "),
+                Text(
+                  "How much do you care about a film's... ",
+                  style: TextStyle(
+                    fontSize: 15.0, // insert your font size here
+                  ),
+                ),
 
                 Expanded(
-                  flex: 1,
+                  flex: 8,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Acclaim?"),
+                      Text(
+                        "Acclaim?",
+                        style: TextStyle(
+                          fontSize: 20.0, // insert your font size here
+                        ),
+                      ),
                       Slider(
                         //label: 'acclaim',
                         value: acclaimSlider,
@@ -270,11 +301,16 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                 ),
 
                 Expanded(
-                  flex: 1,
+                  flex: 8,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Popularity?"),
+                      Text(
+                        "Popularity?",
+                        style: TextStyle(
+                          fontSize: 20.0, // insert your font size here
+                        ),
+                      ),
                       Slider(
                         //label: 'acclaim',
                         value: popularitySlider,
@@ -296,7 +332,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                 ),
 
                 Expanded(
-                  flex: 1,
+                  flex: 13,
                   child: Container(
                     padding: EdgeInsets.all(12),
                     child: FlatButton(
@@ -319,6 +355,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                             '$acclaimSlider');
                         print("How much they care about popularity: " +
                             '$popularitySlider');
+                        Navigator.pop(context);
                       },
                       child: Text(
                         "SEARCH!",

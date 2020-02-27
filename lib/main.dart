@@ -13,7 +13,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyDiscoverPage(),
+      home: MyHomePage(),
+      routes: <String, WidgetBuilder>{
+        "/DiscoverPage": (BuildContext context) => new MyDiscoverPage()
+      }
+
     );
   }
 }
@@ -99,6 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("New Search activated.");
+                            Navigator.of(context).pushNamed('/DiscoverPage');
                           },
                           child: Text(
                             "NEW SEARCH",
