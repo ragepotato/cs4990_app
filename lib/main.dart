@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'pulled.dart';
 import 'discover.dart';
+import 'favorites.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: FavoritesPage(),
       routes: <String, WidgetBuilder>{
         "/DiscoverPage": (BuildContext context) => new MyDiscoverPage()
       }
