@@ -15,6 +15,7 @@ class _FavoritesState extends State<FavoritesPage> {
   int counter = 1;
   List<String> litems = [];
   String filmSummary = 'n/a';
+  final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
 
   final TextEditingController eCtrl = new TextEditingController();
 
@@ -29,11 +30,13 @@ class _FavoritesState extends State<FavoritesPage> {
             new TextField(
               controller: eCtrl,
               onSubmitted: (text) {
+                String linkText = text.replaceAll(' ', '%20');
+                print(linkText);
                 litems.add(text);
                 eCtrl.clear();
                 setState(() {
                   counter = 1;
-                  _getSummary();
+                  _getSummary(linkText);
                 });
               },
             ),
@@ -106,21 +109,30 @@ class _FavoritesState extends State<FavoritesPage> {
         ));
   }
 
-  void _getSummary() {
+  void _getSummary(String linkText) {
     print("Start the request...");
+    String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + linkText + '&page=1&include_adult=false';
+    print(sumText);
     http
         .get(
-            "https://api.themoviedb.org/3/movie/105?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US")
+            sumText)
         .then((res) {
       print("received response.");
       print(res.statusCode);
       var resSummary = jsonDecode(res.body);
       setState(() {
-        filmSummary = resSummary['overview'];
+        filmSummary = resSummary['results'][0]['overview'];
       });
       //print(res.body);
     }).catchError((e) {
       print('Failed');
     });
   }
+}
+
+
+class filmMovie{
+  String filmSummary;
+  filmMovie(this.filmSummary)
+
 }
