@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'pulled.dart';
 import 'discover.dart';
 import 'favorites.dart';
+import 'apiPractice.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
