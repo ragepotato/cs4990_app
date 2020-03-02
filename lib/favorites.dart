@@ -14,7 +14,7 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesState extends State<FavoritesPage> {
   int counter = 1;
   List<String> litems = [];
-  String filmSummary = 'n/a';
+  String movieSummary = 'n/a';
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
 
   final TextEditingController eCtrl = new TextEditingController();
@@ -29,14 +29,25 @@ class _FavoritesState extends State<FavoritesPage> {
           children: <Widget>[
             new TextField(
               controller: eCtrl,
-              onSubmitted: (text) {
+              onSubmitted: (text) async{
                 String linkText = text.replaceAll(' ', '%20');
-                print(linkText);
+
                 litems.add(text);
                 eCtrl.clear();
+                String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + linkText + '&page=1&include_adult=false';
+                print(sumText);
+                var res = await http.get(sumText);
+                var resSummary = jsonDecode(res.body);
+                var theFilm = filmMovie(resSummary['results'][0]['overview']);
+                movieSummary = theFilm.getSummary();
+
+
                 setState(() {
                   counter = 1;
-                  _getSummary(linkText);
+                  print("heres");
+                  print(linkText);
+                  print("Summary: " + movieSummary);
+                  print ("wowza");
                 });
               },
             ),
@@ -92,47 +103,52 @@ class _FavoritesState extends State<FavoritesPage> {
                               //Text(_getSummary()),
                               Container(
                                 padding: EdgeInsets.all(12),
-                                child: Text(filmSummary),
+                                child: Text(movieSummary),
                               ),
                             ],
                           ),
                         ),
                       );
 
-//                      return new ListTile(
-//                        leading: Icon(Icons.laptop_chromebook),
-//                        title:
-//                            Text((counter++).toString() + '. ' + litems[Index]),
-//                      );
+
                     }))
           ],
         ));
   }
-
-  void _getSummary(String linkText) {
-    print("Start the request...");
-    String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + linkText + '&page=1&include_adult=false';
-    print(sumText);
-    http
-        .get(
-            sumText)
-        .then((res) {
-      print("received response.");
-      print(res.statusCode);
-      var resSummary = jsonDecode(res.body);
-      setState(() {
-        filmSummary = resSummary['results'][0]['overview'];
-      });
-      //print(res.body);
-    }).catchError((e) {
-      print('Failed');
-    });
-  }
 }
 
+class filmMovie {
+  String _filmName;
+  //String _filmSummary;
 
-class filmMovie{
-  String filmSummary;
-  filmMovie(this.filmSummary)
+  filmMovie(this._filmName){
+    //setSummary();
+  }
 
+  void setSummary() async{
+//    print(_filmName);
+//    //print("Start the request.....");
+//    String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + _filmName + '&page=1&include_adult=false';
+//    print(sumText);
+//
+//    var res = await http.get(sumText);
+//    print(res.statusCode);
+//    var resSummary = jsonDecode(res.body);
+//    print("Got here");
+//    print(resSummary['results'][0]['overview']);
+//    _filmName = resSummary['results'][0]['overview'];
+
+
+//    await http.get(sumText).then((res){
+//      print(res.statusCode);
+//
+//    }).catchError((e){
+//      print("Error.");
+//    });
+  }
+
+  String getSummary() {
+      return _filmName;
+
+  }
 }
