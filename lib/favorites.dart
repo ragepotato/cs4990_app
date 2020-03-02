@@ -13,7 +13,8 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesState extends State<FavoritesPage> {
   int counter = 1;
-  List<String> litems = [];
+  var litems = List<filmMovie>();
+  //List<filmMovie> litems = [];
   String movieSummary = 'n/a';
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
 
@@ -31,16 +32,24 @@ class _FavoritesState extends State<FavoritesPage> {
               controller: eCtrl,
               onSubmitted: (text) async{
                 String linkText = text.replaceAll(' ', '%20');
-
-                litems.add(text);
-                eCtrl.clear();
                 String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + linkText + '&page=1&include_adult=false';
                 print(sumText);
                 var res = await http.get(sumText);
+                print("Okay");
                 var resSummary = jsonDecode(res.body);
-                var theFilm = filmMovie(resSummary['results'][0]['overview']);
-                movieSummary = theFilm.getSummary();
+                print("Okay2");
+                movieSummary = resSummary['results'][0]['overview'];
+                print("Okay3");
+                var theFilm = new filmMovie(text, movieSummary);
 
+                print("Okay4");
+                movieSummary = theFilm.getSummary();
+                print("Okay5");
+                print(theFilm.getFilmName());
+                print(theFilm.getSummary());
+                litems.add(theFilm);
+                print("Okay6");
+                eCtrl.clear();
 
                 setState(() {
                   counter = 1;
@@ -59,7 +68,7 @@ class _FavoritesState extends State<FavoritesPage> {
                         Divider(),
                     itemBuilder: (BuildContext ctxt, int Index) {
                       return Dismissible(
-                        key: Key(litems[Index]),
+                        key: Key(litems[Index].filmName),
                         onDismissed: (direction) {
                           // Remove the item from the data source.
 
@@ -96,14 +105,14 @@ class _FavoritesState extends State<FavoritesPage> {
 //                                },
                             ),
                             title: Text(
-                                (Index + 1).toString() + '. ' + litems[Index]),
+                                (Index + 1).toString() + '. ' + litems[Index].getFilmName()),
 
                             children: <Widget>[
                               //print(_getSummary());
                               //Text(_getSummary()),
                               Container(
                                 padding: EdgeInsets.all(12),
-                                child: Text(movieSummary),
+                                child: Text(litems[Index].getSummary()),
                               ),
                             ],
                           ),
@@ -118,10 +127,10 @@ class _FavoritesState extends State<FavoritesPage> {
 }
 
 class filmMovie {
-  String _filmName;
-  //String _filmSummary;
+  String filmPlot;
+  String filmName;
 
-  filmMovie(this._filmName){
+  filmMovie(this.filmName, this.filmPlot){
     //setSummary();
   }
 
@@ -147,8 +156,13 @@ class filmMovie {
 //    });
   }
 
+  String getFilmName(){
+    return filmName;
+  }
+
+
   String getSummary() {
-      return _filmName;
+      return filmPlot;
 
   }
 }
