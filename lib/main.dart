@@ -4,6 +4,7 @@ import 'pulled.dart';
 import 'discover.dart';
 import 'favorites.dart';
 import 'apiPractice.dart';
+import 'opening.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -17,8 +18,13 @@ class MyApp extends StatelessWidget {
       ),
       home: FavoritesPage(),
       routes: <String, WidgetBuilder>{
-        "/DiscoverPage": (BuildContext context) => new MyDiscoverPage()
+        "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
+        "/FavoritesPage": (BuildContext context) => new FavoritesPage()
       }
+
+
+
+
 
     );
   }

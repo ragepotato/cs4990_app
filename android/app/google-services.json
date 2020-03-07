@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "875937434813",
+    "firebase_url": "https://cs4990app.firebaseio.com",
+    "project_id": "cs4990app",
+    "storage_bucket": "cs4990app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875937434813:android:9d68c260be894f773d7bd4",
+        "android_client_info": {
+          "package_name": "edu.cpp.stephent4990.cs4990_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875937434813-lj3uq1ain4955ohqqvbf3u6r3ag3hgdm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDrJJ3T0wvsn6u7xEopgkUM08SZM_VlV4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875937434813-lj3uq1ain4955ohqqvbf3u6r3ag3hgdm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

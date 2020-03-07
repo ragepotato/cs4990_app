@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'dart:ui';
@@ -5,8 +6,11 @@ import 'main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
 class FavoritesPage extends StatefulWidget {
-  //FavoritesPage({Key key, this.title}) : super(key: key);
+  FavoritesPage({Key key, this.user}) : super(key: key);
+
+  final String user;
   @override
   _FavoritesState createState() => _FavoritesState();
 }
@@ -15,8 +19,19 @@ class _FavoritesState extends State<FavoritesPage> {
   int counter = 1;
   var litems = List<filmMovie>();
   //List<filmMovie> litems = [];
+  String movieTitle = ' ';
   String movieSummary = 'n/a';
+  String movieDate = 'n/a';
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
+  var currentUser = "";
+
+//  _FavoritesState(){
+//    setState(() {
+//      currentUser = widget.user.displayName;
+//    });
+//  }
+
+
 
   final TextEditingController eCtrl = new TextEditingController();
 
@@ -24,42 +39,44 @@ class _FavoritesState extends State<FavoritesPage> {
   Widget build(BuildContext ctxt) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Dynamic Demo"),
+          title: new Text("Hello, ${widget.user}"),
         ),
         body: new Column(
           children: <Widget>[
             new TextField(
               controller: eCtrl,
+
+              //maybe put a flatbutton search onPressed()
               onSubmitted: (text) async{
                 String linkText = text.replaceAll(' ', '%20');
                 String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + linkText + '&page=1&include_adult=false';
                 print(sumText);
                 var res = await http.get(sumText);
-                print("Okay");
                 var resSummary = jsonDecode(res.body);
-                print("Okay2");
+                //if (resSummary)
+                int howMany = resSummary['total_results'];
+                print(howMany);
+                movieTitle = resSummary['results'][0]['title'];
                 movieSummary = resSummary['results'][0]['overview'];
-                print("Okay3");
-                var theFilm = new filmMovie(text, movieSummary);
-
-                print("Okay4");
+                movieDate = resSummary['results'][0]['release_date'];
+                var theFilm = new filmMovie(movieTitle, movieSummary, movieDate);
                 movieSummary = theFilm.getSummary();
-                print("Okay5");
-                print(theFilm.getFilmName());
-                print(theFilm.getSummary());
+//                print(theFilm.getFilmName());
+//                print(theFilm.getSummary());
                 litems.add(theFilm);
-                print("Okay6");
                 eCtrl.clear();
 
                 setState(() {
                   counter = 1;
-                  print("heres");
-                  print(linkText);
-                  print("Summary: " + movieSummary);
-                  print ("wowza");
                 });
               },
             ),
+            FlatButton(child:Text("SEARCH"),
+              onPressed: (){
+
+              },
+            ),
+
             Expanded(
                 child: ListView.separated(
                     padding: const EdgeInsets.all(8),
@@ -68,7 +85,7 @@ class _FavoritesState extends State<FavoritesPage> {
                         Divider(),
                     itemBuilder: (BuildContext ctxt, int Index) {
                       return Dismissible(
-                        key: Key(litems[Index].filmName),
+                        key: Key(litems[Index].getFilmName()),
                         onDismissed: (direction) {
                           // Remove the item from the data source.
 
@@ -105,7 +122,7 @@ class _FavoritesState extends State<FavoritesPage> {
 //                                },
                             ),
                             title: Text(
-                                (Index + 1).toString() + '. ' + litems[Index].getFilmName()),
+                                (Index + 1).toString() + '. ' + litems[Index].getFilmName() + " (" + litems[Index].getReleaseYear() + ")"),
 
                             children: <Widget>[
                               //print(_getSummary());
@@ -129,32 +146,11 @@ class _FavoritesState extends State<FavoritesPage> {
 class filmMovie {
   String filmPlot;
   String filmName;
+  String filmReleaseDate;
 
-  filmMovie(this.filmName, this.filmPlot){
-    //setSummary();
+  filmMovie(this.filmName, this.filmPlot, this.filmReleaseDate){
   }
 
-  void setSummary() async{
-//    print(_filmName);
-//    //print("Start the request.....");
-//    String sumText = 'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' + _filmName + '&page=1&include_adult=false';
-//    print(sumText);
-//
-//    var res = await http.get(sumText);
-//    print(res.statusCode);
-//    var resSummary = jsonDecode(res.body);
-//    print("Got here");
-//    print(resSummary['results'][0]['overview']);
-//    _filmName = resSummary['results'][0]['overview'];
-
-
-//    await http.get(sumText).then((res){
-//      print(res.statusCode);
-//
-//    }).catchError((e){
-//      print("Error.");
-//    });
-  }
 
   String getFilmName(){
     return filmName;
@@ -163,6 +159,11 @@ class filmMovie {
 
   String getSummary() {
       return filmPlot;
-
   }
+
+  String getReleaseYear(){
+    return filmReleaseDate.substring(0, filmReleaseDate.indexOf('-'));
+  }
+
+
 }
