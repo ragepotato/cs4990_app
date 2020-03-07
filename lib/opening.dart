@@ -58,7 +58,7 @@ class _openingState extends State<openingPage> {
                 print("Successful! " + value.user.uid);
                 Navigator.push(
                   context,
-                MaterialPageRoute(builder: (context) => FavoritesPage(user: value.user.uid)),);
+                MaterialPageRoute(builder: (context) => FavoritesPage(uid: value.user.uid)),);
                 //Navigator.of(context).pushNamed('/FavoritesPage', arguments: value.user.uid);
               }).catchError((e){
                 print("Failed to sign up! " + e.toString());

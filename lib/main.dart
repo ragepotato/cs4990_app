@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: FavoritesPage(),
+      home: openingPage(),
       routes: <String, WidgetBuilder>{
         "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
         "/FavoritesPage": (BuildContext context) => new FavoritesPage()
