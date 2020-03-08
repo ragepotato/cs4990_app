@@ -38,8 +38,16 @@ class _FavoritesState extends State<FavoritesPage> {
 
 
         ds.value.forEach((k, v){
-          print(k);
-          print(v['summary']);
+          movieTitle = k;
+          movieDate = v['releaseYear'];
+          movieSummary = v['summary'];
+          var theFilm = new filmMovie(movieTitle, movieSummary, movieDate);
+          litems.add(theFilm);
+
+        });
+        setState(() {
+          print("Length: " + litems.length.toString());
+
         });
       }).catchError((e){
         print("None available for " + currentUser + " --- " + e.toString());
@@ -48,10 +56,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
 
 
-      setState(() {
 
-
-      });
     }).catchError((e){
       print("Failed to get the current user!" + e.toString());
     });
@@ -79,7 +84,9 @@ class _FavoritesState extends State<FavoritesPage> {
           children: <Widget>[
             new TextField(
               controller: eCtrl,
-
+              decoration: InputDecoration(
+                labelText: "   Enter film name here"
+              ),
               //maybe put a flatbutton search onPressed()
 //              onSubmitted: (text) async{
 //
@@ -97,7 +104,7 @@ class _FavoritesState extends State<FavoritesPage> {
                   print(howMany);
                   movieTitle = resSummary['results'][0]['title'];
                   movieSummary = resSummary['results'][0]['overview'];
-                  movieDate = resSummary['results'][0]['release_date'];
+                  movieDate = resSummary['results'][0]['release_date'].substring(0, resSummary['results'][0]['release_date'].indexOf('-'));
 
                   print("Here.");
                   ref.child(currentUser + "/favoriteMovies/filmName/" + movieTitle).set(
@@ -109,19 +116,6 @@ class _FavoritesState extends State<FavoritesPage> {
                       print("Movie is added to database.");
                     }).catchError((e){
                       print("Failed due to " + e);
-                  });
-
-                  ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds){
-                    print(ds.value);
-
-                    ds.value.forEach((k, v){
-                      print(k);
-                      print(v);
-                    });
-
-
-                  }).catchError((e){
-                    print("None available for " + currentUser + " --- " + e.toString());
                   });
 
 
@@ -154,7 +148,16 @@ class _FavoritesState extends State<FavoritesPage> {
                           // Remove the item from the data source.
 
                           setState(() {
+                            String removeMovie = litems[Index].getFilmName();
                             litems.removeAt(Index);
+                            //litems.remove(litems[Index].getFilmName());
+                            ref.child(currentUser + "/favoriteMovies/filmName/" + removeMovie).remove().then((res){
+                              //litems[Index].getFilmName()
+                              print("Movie is removed from database.");
+                            }).catchError((e){
+                              print("Failed due to " + e);
+                            });
+
                             counter = 1;
                           });
 
@@ -226,7 +229,9 @@ class filmMovie {
   }
 
   String getReleaseYear(){
-    return filmReleaseDate.substring(0, filmReleaseDate.indexOf('-'));
+    return filmReleaseDate;
+
+  //  return filmReleaseDate.substring(0, filmReleaseDate.indexOf('-'));
   }
 
 
