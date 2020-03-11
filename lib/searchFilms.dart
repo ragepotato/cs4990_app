@@ -60,7 +60,12 @@ class _SearchFilmState extends State<SearchFilmPage> {
                                 child: Text(widget.listSearch[Index]['title'],),
                                 onPressed: (){
                                   print(widget.listSearch[Index]['title']);
-                                  searchChoice = Index;
+
+                                  Navigator.pop(context, Index);
+//                                  Navigator.push(
+//                                    context,
+//                                    MaterialPageRoute(builder: (context) => FavoritesPage(searchIndex: searchChoice,)),);
+//
                                 },
                               )
 
@@ -72,9 +77,7 @@ class _SearchFilmState extends State<SearchFilmPage> {
         ));
   }
 
-  int getSearchChoice(){
-    return searchChoice;
-  }
+
 
 
 

@@ -11,8 +11,8 @@ import 'dart:math';
 import 'searchFilms.dart';
 
 class FavoritesPage extends StatefulWidget {
-  FavoritesPage({Key key, this.uid}) : super(key: key);
-
+  FavoritesPage({Key key, this.uid, this.searchIndex}) : super(key: key);
+  int searchIndex;
   final String uid;
 
   @override
@@ -32,6 +32,7 @@ class _FavoritesState extends State<FavoritesPage> {
   String moviePosterLink = 'n/a';
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
   var currentUser = "Unknown";
+  int searchNumber = 0;
 
   _FavoritesState() {
     _auth.currentUser().then((user) {
@@ -109,38 +110,46 @@ class _FavoritesState extends State<FavoritesPage> {
                   }
                   print(searchFilmList.length);
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
+                  searchNumber = await Navigator.push(context, new MaterialPageRoute(
+                    builder: (BuildContext context) => new SearchFilmPage(listSearch: searchFilmList,),
+                    fullscreenDialog: true,)
+                  );
 
 
-                  movieTitle = resSummary['results'][0]['title'] +
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
+
+
+
+
+                  movieTitle = resSummary['results'][searchNumber]['title'] +
                       " (" +
-                      resSummary['results'][0]['release_date'].substring(
+                      resSummary['results'][searchNumber]['release_date'].substring(
                           0,
-                          resSummary['results'][0]['release_date']
+                          resSummary['results'][searchNumber]['release_date']
                               .indexOf('-')) +
                       ")";
-                  movieSummary = resSummary['results'][0]['overview'];
-                  movieDate = resSummary['results'][0]['release_date']
+                  movieSummary = resSummary['results'][searchNumber]['overview'];
+                  movieDate = resSummary['results'][searchNumber]['release_date']
                       .substring(
                       0,
-                      resSummary['results'][0]['release_date']
+                      resSummary['results'][searchNumber]['release_date']
                           .indexOf('-'));
-                  moviePosterLink = resSummary['results'][0]['poster_path'];
+                  moviePosterLink = resSummary['results'][searchNumber]['poster_path'];
                   print("Here.");
                   ref
                       .child(currentUser +
                       "/favoriteMovies/filmName/" +
                       movieTitle)
                       .set({
-                    "releaseYear": resSummary['results'][0]['release_date']
+                    "releaseYear": resSummary['results'][searchNumber]['release_date']
                         .substring(
                         0,
-                        resSummary['results'][0]['release_date']
+                        resSummary['results'][searchNumber]['release_date']
                             .indexOf('-')),
-                    "summary": resSummary['results'][0]['overview'],
-                    "posterPath": resSummary['results'][0]['poster_path'],
+                    "summary": resSummary['results'][searchNumber]['overview'],
+                    "posterPath": resSummary['results'][searchNumber]['poster_path'],
                   }).then((res) {
                     print("Movie is added to database.");
                   }).catchError((e) {
