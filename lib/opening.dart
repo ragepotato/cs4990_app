@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class openingPage extends StatefulWidget {
-  //FavoritesPage({Key key, this.title}) : super(key: key);
+  openingPage({Key key}) : super(key: key);
   @override
   _openingState createState() => _openingState();
 }
