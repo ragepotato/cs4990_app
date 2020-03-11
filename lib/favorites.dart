@@ -25,6 +25,7 @@ class _FavoritesState extends State<FavoritesPage> {
   String movieTitle = ' ';
   String movieSummary = 'n/a';
   String movieDate = 'n/a';
+  String moviePosterLink = 'n/a';
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
   var currentUser = "Unknown";
 
@@ -41,7 +42,9 @@ class _FavoritesState extends State<FavoritesPage> {
           movieTitle = k;
           movieDate = v['releaseYear'];
           movieSummary = v['summary'];
-          var theFilm = new filmMovie(movieTitle, movieSummary, movieDate);
+          moviePosterLink =  v['posterPath'];
+          print(moviePosterLink);
+          var theFilm = new filmMovie(movieTitle, movieSummary, movieDate, moviePosterLink);
           litems.add(theFilm);
 
         });
@@ -102,15 +105,16 @@ class _FavoritesState extends State<FavoritesPage> {
                   //if (resSummary)
                   int howMany = resSummary['total_results'];
                   print(howMany);
-                  movieTitle = resSummary['results'][0]['title'];
+                  movieTitle = resSummary['results'][0]['title'] + " (" + resSummary['results'][0]['release_date'].substring(0, resSummary['results'][0]['release_date'].indexOf('-')) + ")";
                   movieSummary = resSummary['results'][0]['overview'];
                   movieDate = resSummary['results'][0]['release_date'].substring(0, resSummary['results'][0]['release_date'].indexOf('-'));
-
+                  moviePosterLink = resSummary['results'][0]['poster_path'];
                   print("Here.");
                   ref.child(currentUser + "/favoriteMovies/filmName/" + movieTitle).set(
                     {
                       "releaseYear" : resSummary['results'][0]['release_date'].substring(0, resSummary['results'][0]['release_date'].indexOf('-')),
                       "summary" : resSummary['results'][0]['overview'],
+                      "posterPath" : resSummary['results'][0]['poster_path'],
                     }
                   ).then((res){
                       print("Movie is added to database.");
@@ -122,7 +126,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
 
 
-                  var theFilm = new filmMovie(movieTitle, movieSummary, movieDate);
+                  var theFilm = new filmMovie(movieTitle, movieSummary, movieDate, moviePosterLink);
                   movieSummary = theFilm.getSummary();
 //                print(theFilm.getFilmName());
 //                print(theFilm.getSummary());
@@ -178,7 +182,7 @@ class _FavoritesState extends State<FavoritesPage> {
                             //leading: Icon(Icons.laptop_chromebook),
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(
-                                  "https://filmschoolrejects.com/wp-content/uploads/2017/04/1irbHjhl9Yezn550CmdHrNA.jpeg"),
+                                  "https://image.tmdb.org/t/p/w500" + litems[Index].getFilmPoster()),
                             ),
                             trailing: IconButton(
                               icon: Icon(Icons.keyboard_arrow_down),
@@ -189,7 +193,7 @@ class _FavoritesState extends State<FavoritesPage> {
 //                                },
                             ),
                             title: Text(
-                                (Index + 1).toString() + '. ' + litems[Index].getFilmName() + " (" + litems[Index].getReleaseYear() + ")"),
+                                (Index + 1).toString() + '. ' + litems[Index].getFilmName()),
 
                             children: <Widget>[
                               //print(_getSummary());
@@ -214,8 +218,9 @@ class filmMovie {
   String filmPlot;
   String filmName;
   String filmReleaseDate;
+  String filmPoster;
 
-  filmMovie(this.filmName, this.filmPlot, this.filmReleaseDate){
+  filmMovie(this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster){
   }
 
 
@@ -234,5 +239,8 @@ class filmMovie {
   //  return filmReleaseDate.substring(0, filmReleaseDate.indexOf('-'));
   }
 
+  String getFilmPoster(){
+    return filmPoster;
+  }
 
 }
