@@ -5,8 +5,8 @@ import 'package:flutter_multiselect/flutter_multiselect.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 
 class MyDiscoverPage extends StatefulWidget {
-  MyDiscoverPage({Key key, this.title}) : super(key: key);
-
+  MyDiscoverPage({Key key, this.title, this.uid}) : super(key: key);
+  final String uid;
   final String title;
 
   @override

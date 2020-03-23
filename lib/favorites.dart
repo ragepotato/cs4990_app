@@ -30,6 +30,11 @@ class _FavoritesState extends State<FavoritesPage> {
   String movieSummary = 'n/a';
   String movieDate = 'n/a';
   String moviePosterLink = 'n/a';
+
+  //var movieGenres = List<String>();
+  List movieGenres = [];
+
+  //List<String> movieGenres = List();
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
   var currentUser = "Unknown";
   int searchNumber = 0;
@@ -44,9 +49,9 @@ class _FavoritesState extends State<FavoritesPage> {
           movieDate = v['releaseYear'];
           movieSummary = v['summary'];
           moviePosterLink = v['posterPath'];
-          print(moviePosterLink);
+          //movieGenres = v['genres'];
           var theFilm = new filmMovie(
-              movieTitle, movieSummary, movieDate, moviePosterLink);
+              movieTitle, movieSummary, movieDate, moviePosterLink, movieGenres);
           litems.add(theFilm);
         });
         setState(() {
@@ -96,68 +101,97 @@ class _FavoritesState extends State<FavoritesPage> {
 
                   for (int i = 0; i < howMany; i++) {
                     String yearDate = '';
-                    if (resSummary['results'][i]['release_date'] == ""){
-                        yearDate = '?';
-                    }
-                    else{
-                      yearDate = resSummary['results'][i]['release_date'].substring(0,resSummary['results'][i]['release_date'].indexOf('-'));
+                    if (resSummary['results'][i]['release_date'] == "") {
+                      yearDate = '?';
+                    } else {
+                      yearDate = resSummary['results'][i]['release_date']
+                          .substring(
+                              0,
+                              resSummary['results'][i]['release_date']
+                                  .indexOf('-'));
                     }
                     searchFilmList.add({
-
-                    "title": resSummary['results'][i]['title'] + " (" + yearDate +")",
+                      "title": resSummary['results'][i]['title'] +
+                          " (" +
+                          yearDate +
+                          ")",
                     });
                     print(i.toString() + ". " + searchFilmList[i]['title']);
                   }
                   print(searchFilmList.length);
 
-                  searchNumber = await Navigator.push(context, new MaterialPageRoute(
-                    builder: (BuildContext context) => new SearchFilmPage(listSearch: searchFilmList,),
-                    fullscreenDialog: true,)
-                  );
-
+                  searchNumber = await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) => new SearchFilmPage(
+                          listSearch: searchFilmList,
+                        ),
+                        fullscreenDialog: true,
+                      ));
 
 //                  Navigator.push(
 //                    context,
 //                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
 
-
-
-
                   movieTitle = resSummary['results'][searchNumber]['title'] +
                       " (" +
-                      resSummary['results'][searchNumber]['release_date'].substring(
+                      resSummary['results'][searchNumber]['release_date']
+                          .substring(
+                              0,
+                              resSummary['results'][searchNumber]
+                                      ['release_date']
+                                  .indexOf('-')) +
+                      ")";
+                  movieSummary =
+                      resSummary['results'][searchNumber]['overview'];
+                  movieDate = resSummary['results'][searchNumber]
+                          ['release_date']
+                      .substring(
                           0,
                           resSummary['results'][searchNumber]['release_date']
-                              .indexOf('-')) +
-                      ")";
-                  movieSummary = resSummary['results'][searchNumber]['overview'];
-                  movieDate = resSummary['results'][searchNumber]['release_date']
-                      .substring(
-                      0,
-                      resSummary['results'][searchNumber]['release_date']
-                          .indexOf('-'));
-                  moviePosterLink = resSummary['results'][searchNumber]['poster_path'];
-                  print("Here.");
+                              .indexOf('-'));
+                  moviePosterLink =
+                      resSummary['results'][searchNumber]['poster_path'];
+                  movieGenres.clear();
+                  //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
+                  for (int j = 0;
+                      j <
+                          resSummary['results'][searchNumber]['genre_ids']
+                              .length;
+                      j++) {
+                    String whatGenre = getGenre(
+                        resSummary['results'][searchNumber]['genre_ids'][j]);
+                    print(whatGenre.toString());
+                    movieGenres.add(whatGenre.toString());
+                  }
+
+
                   ref
                       .child(currentUser +
-                      "/favoriteMovies/filmName/" +
-                      movieTitle)
+                          "/favoriteMovies/filmName/" +
+                          movieTitle)
                       .set({
-                    "releaseYear": resSummary['results'][searchNumber]['release_date']
+                    "releaseYear": resSummary['results'][searchNumber]
+                            ['release_date']
                         .substring(
-                        0,
-                        resSummary['results'][searchNumber]['release_date']
-                            .indexOf('-')),
+                            0,
+                            resSummary['results'][searchNumber]['release_date']
+                                .indexOf('-')),
                     "summary": resSummary['results'][searchNumber]['overview'],
-                    "posterPath": resSummary['results'][searchNumber]['poster_path'],
+                    "posterPath": resSummary['results'][searchNumber]
+                        ['poster_path'],
+                    "genres" : movieGenres,
+
+                    //"genres": movieGenres,
                   }).then((res) {
                     print("Movie is added to database.");
                   }).catchError((e) {
                     print("Failed due to " + e);
                   });
 
+
                   var theFilm = new filmMovie(
-                      movieTitle, movieSummary, movieDate, moviePosterLink);
+                      movieTitle, movieSummary, movieDate, moviePosterLink, movieGenres);
                   movieSummary = theFilm.getSummary();
 //                print(theFilm.getFilmName());
 //                print(theFilm.getSummary());
@@ -186,8 +220,8 @@ class _FavoritesState extends State<FavoritesPage> {
                             //litems.remove(litems[Index].getFilmName());
                             ref
                                 .child(currentUser +
-                                "/favoriteMovies/filmName/" +
-                                removeMovie)
+                                    "/favoriteMovies/filmName/" +
+                                    removeMovie)
                                 .remove()
                                 .then((res) {
                               //litems[Index].getFilmName()
@@ -207,7 +241,7 @@ class _FavoritesState extends State<FavoritesPage> {
                         background: Container(color: Colors.red),
 
                         child: Container(
-                          color: Colors.greenAccent,
+                          color: Colors.lightBlueAccent,
                           child: new ExpansionTile(
 //                            onTap: (){
 //                              new Card(
@@ -246,6 +280,66 @@ class _FavoritesState extends State<FavoritesPage> {
           ],
         ));
   }
+
+  String getGenre(int genreID) {
+
+    if (genreID == 28) {
+      return "Action";
+    }
+    if (genreID == 12) {
+      return "Adventure";
+    }
+    if (genreID == 16) {
+      return "Animated";
+    }
+    if (genreID == 35) {
+      return "Comedy";
+    }
+    if (genreID == 80) {
+      return "Crime drama";
+    }
+    if (genreID == 99) {
+      return "Documentary";
+    }
+    if (genreID == 18) {
+      return "Drama";
+    }
+    if (genreID == 10751) {
+      return "Family";
+    }
+    if (genreID == 14) {
+      return "Fantasy";
+    }
+    if (genreID == 36) {
+      return "History";
+    }
+    if (genreID == 10402) {
+      return "Musical";
+    }
+    if (genreID == 9648) {
+      return "Mystery";
+    }
+    if (genreID == 10749) {
+      return "Romance";
+    }
+    if (genreID == 878) {
+      return "Science fiction";
+    }
+    if (genreID == 10770) {
+      return "TV Movie";
+    }
+    if (genreID == 53) {
+      return "Thriller";
+    }
+    if (genreID == 10752) {
+      return "War";
+    }
+    if (genreID == 37) {
+      return "Western";
+    }
+
+    return "x";
+  }
 }
 
 class filmMovie {
@@ -253,9 +347,10 @@ class filmMovie {
   String filmName;
   String filmReleaseDate;
   String filmPoster;
+  List filmGenres;
 
-  filmMovie(this.filmName, this.filmPlot, this.filmReleaseDate,
-      this.filmPoster) {}
+  filmMovie(
+      this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster, this.filmGenres) {}
 
   String getFilmName() {
     return filmName;
@@ -273,5 +368,9 @@ class filmMovie {
 
   String getFilmPoster() {
     return filmPoster;
+  }
+
+  List getFilmGenres() {
+    return filmGenres;
   }
 }

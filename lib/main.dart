@@ -1,3 +1,4 @@
+import 'package:cs4990_app/theaterFind.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'pulled.dart';
@@ -31,8 +32,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
+  MyHomePage({Key key, this.title, this.uid}) : super(key: key);
+  final String uid;
   final String title;
 
   @override
@@ -111,7 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("New Search activated.");
-                            Navigator.of(context).pushNamed('/DiscoverPage');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MyDiscoverPage(uid: widget.uid)),);
                           },
                           child: Text(
                             "NEW SEARCH",
@@ -170,6 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("Changing theater.");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => TheaterFindPage(uid: widget.uid)),);
+
                           },
                           child: Text(
                             "CHANGE THEATER",
@@ -187,6 +194,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("Search by preferences activated.");
+                            print(widget.uid);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => FavoritesPage(uid: widget.uid)),);
                           },
                           child: Column(
                             children: <Widget>[
