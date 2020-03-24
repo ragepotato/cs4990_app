@@ -6,6 +6,9 @@ import 'discover.dart';
 import 'favorites.dart';
 import 'apiPractice.dart';
 import 'opening.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'dart:collection';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -32,15 +35,58 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.uid}) : super(key: key);
+  MyHomePage({Key key, this.title, this.uid, this.listOfFaves}) : super(key: key);
   final String uid;
   final String title;
-
+  final List listOfFaves;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference ref = FirebaseDatabase.instance.reference();
+  var currentUser = "Unknown";
+ var faveFilmsList = [];
+
+  _MyHomePageState(){
+   // var faveFilmsList = List<filmMovie>();
+    _auth.currentUser().then((user) {
+      currentUser = user.uid;
+
+      ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
+        ds.value.forEach((k, v) {
+
+//                                  movieTitle = k;
+//                                  movieDate = v['releaseYear'];
+//                                  movieSummary = v['summary'];
+//                                  moviePosterLink = v['posterPath'];
+
+          //movieGenres = (v['genres']);
+          var theFilm = new filmMovie(
+              k, v['summary'], v['releaseYear'], v['posterPath'], v['genres']);
+          faveFilmsList.add(theFilm);
+          print("Here!");
+
+        });
+        setState(() {
+          print("Length: " + faveFilmsList.length.toString());
+
+        });
+      }).catchError((e) {
+        print("None available for " + currentUser + " --- " + e.toString());
+      });
+    }).catchError((e) {
+      print("Failed to get the current user!" + e.toString());
+    });
+
+
+
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,7 +176,52 @@ class _MyHomePageState extends State<MyHomePage> {
                               left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
+
+
+
+
+
+
+
+
+
+
+
+
+                            var genreMap = Map();
                             print("Search by preferences activated.");
+                            print("List length: " + faveFilmsList.length.toString());
+                            for (int w = 0; w < faveFilmsList.length; w++){
+                              print(faveFilmsList[w].getFilmName());
+                              print(faveFilmsList[w].getFilmGenres());
+                              faveFilmsList[w].getFilmGenres().forEach((element){
+
+                                  if(!genreMap.containsKey(element)) {
+                                    genreMap[element] = 1;
+                                  } else {
+                                    genreMap[element] +=1;
+                                  }
+
+
+                              });
+                            }
+
+                            var sortedKeys = genreMap.keys.toList(growable:false)
+                              ..sort((k1, k2) => genreMap[k2].compareTo(genreMap[k1]));
+                            LinkedHashMap sortedMap = new LinkedHashMap
+                                .fromIterable(sortedKeys, key: (k) => k, value: (k) => genreMap[k]);
+                            var genreList = sortedMap.keys.toList();
+                            print(sortedMap);
+                            print("1. " + genreList[0]);
+                            print("2. " + genreList[1]);
+                            print("3. " + genreList[2]);
+
+
+
+
+
+
+
                             setState(() {
 
                             });

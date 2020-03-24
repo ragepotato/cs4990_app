@@ -6,7 +6,6 @@ import 'main.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import 'searchFilms.dart';
 
@@ -32,7 +31,8 @@ class _FavoritesState extends State<FavoritesPage> {
   String moviePosterLink = 'n/a';
 
   //var movieGenres = List<String>();
-  List movieGenres = [];
+  List<dynamic> movieGenres = [];
+  List movieGenres2 = [];
 
   //List<String> movieGenres = List();
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
@@ -45,17 +45,22 @@ class _FavoritesState extends State<FavoritesPage> {
 
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
         ds.value.forEach((k, v) {
+
           movieTitle = k;
           movieDate = v['releaseYear'];
           movieSummary = v['summary'];
           moviePosterLink = v['posterPath'];
-          //movieGenres = v['genres'];
+
+          //movieGenres = (v['genres']);
           var theFilm = new filmMovie(
-              movieTitle, movieSummary, movieDate, moviePosterLink, movieGenres);
+              movieTitle, movieSummary, movieDate, moviePosterLink, v['genres']);
           litems.add(theFilm);
+
+
         });
         setState(() {
           print("Length: " + litems.length.toString());
+
         });
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
@@ -63,6 +68,8 @@ class _FavoritesState extends State<FavoritesPage> {
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
+    //movieGenres.clear();
+
   }
 
   final TextEditingController eCtrl = new TextEditingController();
@@ -70,9 +77,10 @@ class _FavoritesState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
-        appBar: new AppBar(
-          title: new Text("Hello, $currentUser"),
-        ),
+//        appBar: new AppBar(
+//          title: new Text("Hello, $currentUser"),
+//
+//        ),
         body: new Column(
           children: <Widget>[
             new TextField(
@@ -197,7 +205,7 @@ class _FavoritesState extends State<FavoritesPage> {
 //                print(theFilm.getSummary());
                   litems.add(theFilm);
                   eCtrl.clear();
-
+                  print("litems length: " + litems.length.toString());
                   setState(() {
                     counter = 1;
                   });
@@ -267,7 +275,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
                             children: <Widget>[
                               //print(_getSummary());
-                              //Text(_getSummary()),
+                              Text("# of Genres: " + litems[Index].getFilmGenres().length.toString()),
                               Container(
                                 padding: EdgeInsets.all(12),
                                 child: Text(litems[Index].getSummary()),
@@ -276,7 +284,18 @@ class _FavoritesState extends State<FavoritesPage> {
                           ),
                         ),
                       );
-                    }))
+                    })),
+            FlatButton(
+              child: Text("SAVE"),
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MyHomePage(listOfFaves: litems)));
+              },
+
+            ),
+
+
           ],
         ));
   }
@@ -309,6 +328,9 @@ class _FavoritesState extends State<FavoritesPage> {
     }
     if (genreID == 14) {
       return "Fantasy";
+    }
+    if (genreID == 27){
+      return "Horror";
     }
     if (genreID == 36) {
       return "History";

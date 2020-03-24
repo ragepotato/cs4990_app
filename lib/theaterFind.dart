@@ -130,6 +130,9 @@ class _TheaterFindState extends State<TheaterFindPage> {
     if (genreName == "Music" || genreName == "Musical comedy"){
       return "Musical";
     }
+    if (genreName == "Crime drama"){
+      return genreName;
+    }
     if (genreName == "Romantic comedy"){
     return "Romance";
   }
