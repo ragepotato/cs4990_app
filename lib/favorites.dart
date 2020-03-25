@@ -30,9 +30,18 @@ class _FavoritesState extends State<FavoritesPage> {
   String movieDate = 'n/a';
   String moviePosterLink = 'n/a';
 
-  //var movieGenres = List<String>();
-  List<dynamic> movieGenres = [];
-  List movieGenres2 = [];
+
+//----------this is for zipcode
+  final TextEditingController zipCtrl = new TextEditingController();
+  var searchTheaterList = [];
+  int searchChoice = 0;
+  var _formKey = GlobalKey<FormState>();
+  String zipString = '00000';
+//----------for zipcode
+
+
+
+
 
   //List<String> movieGenres = List();
   final String apiKey = '45d251111f5b70015f4cc65e2b92d0d1';
@@ -43,6 +52,14 @@ class _FavoritesState extends State<FavoritesPage> {
     _auth.currentUser().then((user) {
       currentUser = user.uid;
 
+      ref.child(currentUser + "/location/zipCode").once().then((ds){
+        zipString = ds.value;
+      }).catchError((e) {
+        print("None available for " + currentUser + " --- " + e.toString());
+
+      });
+
+      
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
         ds.value.forEach((k, v) {
 
@@ -83,6 +100,76 @@ class _FavoritesState extends State<FavoritesPage> {
 //        ),
         body: new Column(
           children: <Widget>[
+//--------------zipcode-----------------
+            Form(
+              key: _formKey,
+              child: new Column(
+                children: <Widget>[
+                  Text("Enter Zip Code:"),
+                  TextFormField(
+                    controller: zipCtrl,
+                    decoration: InputDecoration(labelText: " Change Zip Code"),
+                    maxLength: 5,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter something!';
+                      }
+                      if (value.length < 5){
+                        return 'Enter valid zipcode';
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value){
+                      setState(() {
+
+                        if (_formKey.currentState.validate()) {
+                          zipString = zipCtrl.text;
+                      }
+
+                      });
+                      ref
+                          .child(currentUser + "/location/")
+                          .set({
+                        "zipCode": zipString,
+                      }).then((res) {
+                        print("Zip code changed.");
+                      }).catchError((e) {
+                        print("Failed due to " + e);
+                      });
+
+
+
+                    },
+
+
+
+                  ),
+                  FlatButton(
+                      child: Text("Current Zip Code: " + zipString),
+                      onPressed: () async {
+
+
+
+
+                      }),
+
+
+                ],
+              ),
+            ),
+
+
+
+            //--------------zipcode-----------------
+
+
+
+
+
+
+
+
+
             new TextField(
               controller: eCtrl,
               decoration: InputDecoration(labelText: "   Enter film name here"),
@@ -160,7 +247,7 @@ class _FavoritesState extends State<FavoritesPage> {
                               .indexOf('-'));
                   moviePosterLink =
                       resSummary['results'][searchNumber]['poster_path'];
-                  movieGenres.clear();
+                  List<dynamic> movieGenres = [];
                   //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
                   for (int j = 0;
                       j <
@@ -290,7 +377,7 @@ class _FavoritesState extends State<FavoritesPage> {
               onPressed: (){
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MyHomePage(listOfFaves: litems)));
+                  MaterialPageRoute(builder: (context) => MyHomePage(listOfFaves: litems, zipCode: zipString,)));
               },
 
             ),

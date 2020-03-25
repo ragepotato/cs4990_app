@@ -9,6 +9,10 @@ import 'opening.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:collection';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,29 +20,26 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: openingPage(),
-      routes: <String, WidgetBuilder>{
-        "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
-        "/FavoritesPage": (BuildContext context) => new FavoritesPage()
-      }
-
-
-
-
-
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: openingPage(),
+        routes: <String, WidgetBuilder>{
+          "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
+          "/FavoritesPage": (BuildContext context) => new FavoritesPage()
+        });
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.uid, this.listOfFaves}) : super(key: key);
+  MyHomePage({Key key, this.title, this.uid, this.listOfFaves, this.zipCode})
+      : super(key: key);
   final String uid;
   final String title;
   final List listOfFaves;
+  final String zipCode;
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -47,16 +48,23 @@ class _MyHomePageState extends State<MyHomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final DatabaseReference ref = FirebaseDatabase.instance.reference();
   var currentUser = "Unknown";
- var faveFilmsList = [];
+  var faveFilmsList = [];
+  String zipString = '78701';
 
-  _MyHomePageState(){
-   // var faveFilmsList = List<filmMovie>();
+  _MyHomePageState() {
+    // var faveFilmsList = List<filmMovie>();
+
+
+
     _auth.currentUser().then((user) {
       currentUser = user.uid;
-
+      ref.child(currentUser + "/location/zipCode").once().then((ds) {
+        zipString = ds.value;
+      }).catchError((e) {
+        print("None available for " + currentUser + " --- " + e.toString());
+      });
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
         ds.value.forEach((k, v) {
-
 //                                  movieTitle = k;
 //                                  movieDate = v['releaseYear'];
 //                                  movieSummary = v['summary'];
@@ -66,12 +74,9 @@ class _MyHomePageState extends State<MyHomePage> {
           var theFilm = new filmMovie(
               k, v['summary'], v['releaseYear'], v['posterPath'], v['genres']);
           faveFilmsList.add(theFilm);
-          print("Here!");
-
         });
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
-
         });
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
@@ -79,13 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
-
-
-
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +104,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             child: new BackdropFilter(
-              filter: new ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0,),
+              filter: new ImageFilter.blur(
+                sigmaX: 3.0,
+                sigmaY: 3.0,
+              ),
               child: new Container(
                 decoration: new BoxDecoration(
                   color: Colors.black.withOpacity(0.3),
@@ -113,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-
           Center(
             child: Column(
               children: <Widget>[
@@ -160,7 +161,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             print("New Search activated.");
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MyDiscoverPage(uid: widget.uid)),);
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MyDiscoverPage(uid: widget.uid)),
+                            );
                           },
                           child: Text(
                             "NEW SEARCH",
@@ -175,57 +179,65 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: EdgeInsets.only(
                               left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
                           splashColor: Colors.blueAccent,
-                          onPressed: () {
-
-
-
-
-
-
-
-
-
-
-
-
+                          onPressed: () async{
                             var genreMap = Map();
                             print("Search by preferences activated.");
-                            print("List length: " + faveFilmsList.length.toString());
-                            for (int w = 0; w < faveFilmsList.length; w++){
-                              print(faveFilmsList[w].getFilmName());
-                              print(faveFilmsList[w].getFilmGenres());
-                              faveFilmsList[w].getFilmGenres().forEach((element){
-
-                                  if(!genreMap.containsKey(element)) {
-                                    genreMap[element] = 1;
-                                  } else {
-                                    genreMap[element] +=1;
-                                  }
-
-
+                            print("List length: " +
+                                faveFilmsList.length.toString());
+                            for (int w = 0; w < faveFilmsList.length; w++) {
+                              //print(faveFilmsList[w].getFilmName());
+                              //print(faveFilmsList[w].getFilmGenres());
+                              faveFilmsList[w]
+                                  .getFilmGenres()
+                                  .forEach((element) {
+                                if (!genreMap.containsKey(element)) {
+                                  genreMap[element] = 1;
+                                } else {
+                                  genreMap[element] += 1;
+                                }
                               });
                             }
 
-                            var sortedKeys = genreMap.keys.toList(growable:false)
-                              ..sort((k1, k2) => genreMap[k2].compareTo(genreMap[k1]));
-                            LinkedHashMap sortedMap = new LinkedHashMap
-                                .fromIterable(sortedKeys, key: (k) => k, value: (k) => genreMap[k]);
+                            var sortedKeys = genreMap.keys
+                                .toList(growable: false)
+                                  ..sort((k1, k2) =>
+                                      genreMap[k2].compareTo(genreMap[k1]));
+                            LinkedHashMap sortedMap =
+                                new LinkedHashMap.fromIterable(sortedKeys,
+                                    key: (k) => k, value: (k) => genreMap[k]);
                             var genreList = sortedMap.keys.toList();
                             print(sortedMap);
                             print("1. " + genreList[0]);
                             print("2. " + genreList[1]);
                             print("3. " + genreList[2]);
 
+                            var now = new DateTime.now();
+                            var currentDate =
+                            new DateFormat("yyyy-MM-dd").format(now);
+                            String searchPlace =
+                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
+                                    currentDate.toString() +
+                                    "&zip=" +
+                                    zipString +
+                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+                            print(searchPlace);
+                            var res = await http.get(searchPlace);
+                            var resLocation = jsonDecode(res.body);
+                            for (int i = 0; i < resLocation.length; i++) {
+                              print(resLocation[i]["title"]);
+                              //searchTheaterList.add(resLocation[i]["title"]);
+
+
+                              for(int j = 0; j < resLocation[i]['genres'].length; j++){
+                                //print(resLocation[i]['genres'][j]);
+                                print("-" + getTheaterGenre(resLocation[i]['genres'][j]));
+                              }
 
 
 
+                            }
 
-
-
-                            setState(() {
-
-                            });
-
+                            setState(() {});
                           },
                           child: Column(
                             children: <Widget>[
@@ -266,8 +278,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             print("Changing theater.");
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => TheaterFindPage(uid: widget.uid)),);
-
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TheaterFindPage(uid: widget.uid)),
+                            );
                           },
                           child: Text(
                             "CHANGE THEATER",
@@ -288,7 +302,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             print(widget.uid);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => FavoritesPage(uid: widget.uid)),);
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      FavoritesPage(uid: widget.uid)),
+                            );
                           },
                           child: Column(
                             children: <Widget>[
@@ -313,4 +330,40 @@ class _MyHomePageState extends State<MyHomePage> {
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+  String getTheaterGenre(String genreName){
+    if (genreName == "Music" || genreName == "Musical comedy"){
+      return "Musical";
+    }
+    if (genreName == "Crime drama"){
+      return genreName;
+    }
+    if (genreName == "Romantic comedy"){
+      return "Romance";
+    }
+    if (genreName.contains("comedy")){
+      return "Comedy";
+    }
+    if (genreName == "Suspense"){
+      return "Thriller";
+    }
+    if (genreName == "Children"){
+      return "Family";
+    }
+
+    if (genreName == "Biography" || genreName == "Historical drama"){
+      return "History";
+    }
+
+    if (genreName == "Anime"){
+      return "Animated";
+    }
+    if (genreName.contains("drama")){
+      return "Drama";
+    }
+    return genreName;
+  }
+
+
+
+
 }
