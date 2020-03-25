@@ -206,6 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 new LinkedHashMap.fromIterable(sortedKeys,
                                     key: (k) => k, value: (k) => genreMap[k]);
                             var genreList = sortedMap.keys.toList();
+                            var pointCount = sortedMap.values.toList();
                             print(sortedMap);
                             print("1. " + genreList[0]);
                             print("2. " + genreList[1]);
@@ -228,10 +229,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               //searchTheaterList.add(resLocation[i]["title"]);
 
 
-                              for(int j = 0; j < resLocation[i]['genres'].length; j++){
-                                //print(resLocation[i]['genres'][j]);
-                                print("-" + getTheaterGenre(resLocation[i]['genres'][j]));
+
+                              List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
+                              print(theaterGenresFixed);
+                              int count = 0;
+                              for (int h = 0; h < 4; h++){
+
+                                if(theaterGenresFixed.contains(genreList[h])){
+                                  print (genreList[h] + " is a genre!");
+                                  count += pointCount[h];
+
+                                }
                               }
+                              print ("Total count: " + count.toString());
+
 
 
 
@@ -330,38 +341,45 @@ class _MyHomePageState extends State<MyHomePage> {
       // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-  String getTheaterGenre(String genreName){
-    if (genreName == "Music" || genreName == "Musical comedy"){
-      return "Musical";
-    }
-    if (genreName == "Crime drama"){
-      return genreName;
-    }
-    if (genreName == "Romantic comedy"){
-      return "Romance";
-    }
-    if (genreName.contains("comedy")){
-      return "Comedy";
-    }
-    if (genreName == "Suspense"){
-      return "Thriller";
-    }
-    if (genreName == "Children"){
-      return "Family";
-    }
+  List getTheaterGenre(List genreName){
+    for (int i = 0; i < genreName.length; i++){
+      if (genreName[i] == "Music" || genreName[i]  == "Musical comedy"){
+        genreName[i] = "Musical";
+      }
+      else if (genreName[i]  == "Crime drama"){
+        genreName[i] =  genreName;
+      }
+      else if (genreName[i]  == "Romantic comedy"){
+        genreName[i] =  "Romance";
+      }
+      else if (genreName[i].contains("comedy")){
+        genreName[i] =  "Comedy";
+      }
+      else if (genreName[i]  == "Suspense"){
+        genreName[i] =  "Thriller";
+      }
+      else if (genreName[i]  == "Children"){
+        genreName[i] =  "Family";
+      }
 
-    if (genreName == "Biography" || genreName == "Historical drama"){
-      return "History";
-    }
+      else if (genreName[i]  == "Biography" || genreName[i]  == "Historical drama"){
+        genreName[i] =  "History";
+      }
 
-    if (genreName == "Anime"){
-      return "Animated";
-    }
-    if (genreName.contains("drama")){
-      return "Drama";
+      else if (genreName[i]  == "Anime"){
+        genreName[i] =  "Animated";
+      }
+      else if (genreName[i] .contains("drama")){
+        genreName[i] =  "Drama";
+      }
+      else genreName[i] =  genreName[i];
     }
     return genreName;
-  }
+    }
+
+
+
+
 
 
 
