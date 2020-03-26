@@ -29,6 +29,7 @@ class _FavoritesState extends State<FavoritesPage> {
   String movieSummary = 'n/a';
   String movieDate = 'n/a';
   String moviePosterLink = 'n/a';
+  int movieLength = 0;
 
 
 //----------this is for zipcode
@@ -67,10 +68,11 @@ class _FavoritesState extends State<FavoritesPage> {
           movieDate = v['releaseYear'];
           movieSummary = v['summary'];
           moviePosterLink = v['posterPath'];
+          movieLength = v['runTime'];
 
           //movieGenres = (v['genres']);
           var theFilm = new filmMovie(
-              movieTitle, movieSummary, movieDate, moviePosterLink, v['genres']);
+              movieTitle, movieSummary, movieDate, moviePosterLink, v['genres'], movieLength);
           litems.add(theFilm);
 
 
@@ -228,6 +230,15 @@ class _FavoritesState extends State<FavoritesPage> {
 //                    context,
 //                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
 
+                  print(resSummary['results'][searchNumber]['id']);
+                  String resLinkForMovie = "https://api.themoviedb.org/3/movie/" + resSummary['results'][searchNumber]['id'].toString() + "?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US";
+                  print(resLinkForMovie);
+                  var resGet = await http.get(resLinkForMovie);
+
+                  var resFullMovie = jsonDecode(resGet.body);
+
+
+
                   movieTitle = resSummary['results'][searchNumber]['title'] +
                       " (" +
                       resSummary['results'][searchNumber]['release_date']
@@ -245,6 +256,9 @@ class _FavoritesState extends State<FavoritesPage> {
                           0,
                           resSummary['results'][searchNumber]['release_date']
                               .indexOf('-'));
+
+                  movieLength = resFullMovie["runtime"];
+
                   moviePosterLink =
                       resSummary['results'][searchNumber]['poster_path'];
                   List<dynamic> movieGenres = [];
@@ -276,6 +290,7 @@ class _FavoritesState extends State<FavoritesPage> {
                     "posterPath": resSummary['results'][searchNumber]
                         ['poster_path'],
                     "genres" : movieGenres,
+                    "runTime" : movieLength,
 
                     //"genres": movieGenres,
                   }).then((res) {
@@ -286,7 +301,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
 
                   var theFilm = new filmMovie(
-                      movieTitle, movieSummary, movieDate, moviePosterLink, movieGenres);
+                      movieTitle, movieSummary, movieDate, moviePosterLink, movieGenres, movieLength);
                   movieSummary = theFilm.getSummary();
 //                print(theFilm.getFilmName());
 //                print(theFilm.getSummary());
@@ -457,9 +472,10 @@ class filmMovie {
   String filmReleaseDate;
   String filmPoster;
   List filmGenres;
+  int filmLength;
 
   filmMovie(
-      this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster, this.filmGenres) {}
+      this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster, this.filmGenres, this.filmLength) {}
 
   String getFilmName() {
     return filmName;
@@ -482,4 +498,9 @@ class filmMovie {
   List getFilmGenres() {
     return filmGenres;
   }
+
+  int getLength(){
+    return filmLength;
+  }
+
 }

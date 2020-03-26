@@ -1,3 +1,4 @@
+
 import 'package:cs4990_app/theaterFind.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -12,6 +13,7 @@ import 'dart:collection';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
 
 void main() => runApp(MyApp());
 
@@ -40,6 +42,7 @@ class MyHomePage extends StatefulWidget {
   final List listOfFaves;
   final String zipCode;
 
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -50,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var currentUser = "Unknown";
   var faveFilmsList = [];
   String zipString = '78701';
-
+  int totalTime = 0;
   _MyHomePageState() {
     // var faveFilmsList = List<filmMovie>();
 
@@ -72,9 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
           //movieGenres = (v['genres']);
           var theFilm = new filmMovie(
-              k, v['summary'], v['releaseYear'], v['posterPath'], v['genres']);
+              k, v['summary'], v['releaseYear'], v['posterPath'], v['genres'], v['runTime']);
           faveFilmsList.add(theFilm);
+
         });
+
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
         });
@@ -131,7 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Text(
                             "SeeNext",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 60.0),
+                            TextStyle(color: Colors.white, fontSize: 60.0),
                           ),
                         ),
 
@@ -184,9 +189,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             print("Search by preferences activated.");
                             print("List length: " +
                                 faveFilmsList.length.toString());
+                            totalTime = 0;
                             for (int w = 0; w < faveFilmsList.length; w++) {
                               //print(faveFilmsList[w].getFilmName());
                               //print(faveFilmsList[w].getFilmGenres());
+
+                              totalTime += faveFilmsList[w].getLength();
+
                               faveFilmsList[w]
                                   .getFilmGenres()
                                   .forEach((element) {
@@ -198,13 +207,17 @@ class _MyHomePageState extends State<MyHomePage> {
                               });
                             }
 
+                            double averageTime = totalTime / faveFilmsList.length;
+                            print("Average time of favorites: " + averageTime.toString());
+
+
                             var sortedKeys = genreMap.keys
                                 .toList(growable: false)
-                                  ..sort((k1, k2) =>
-                                      genreMap[k2].compareTo(genreMap[k1]));
+                              ..sort((k1, k2) =>
+                                  genreMap[k2].compareTo(genreMap[k1]));
                             LinkedHashMap sortedMap =
-                                new LinkedHashMap.fromIterable(sortedKeys,
-                                    key: (k) => k, value: (k) => genreMap[k]);
+                            new LinkedHashMap.fromIterable(sortedKeys,
+                                key: (k) => k, value: (k) => genreMap[k]);
                             var genreList = sortedMap.keys.toList();
                             var pointCount = sortedMap.values.toList();
                             print(sortedMap);
@@ -224,29 +237,39 @@ class _MyHomePageState extends State<MyHomePage> {
                             print(searchPlace);
                             var res = await http.get(searchPlace);
                             var resLocation = jsonDecode(res.body);
+                            var listOfFilmsInTheaters = [];
+
                             for (int i = 0; i < resLocation.length; i++) {
                               print(resLocation[i]["title"]);
                               //searchTheaterList.add(resLocation[i]["title"]);
 
+                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
 
+                              listOfFilmsInTheaters.add(newFilm);
 
-                              List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-                              print(theaterGenresFixed);
+                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
+                              print(newFilm.theaterFilmGenres());
+                              print("Length: " + newFilm.theaterFilmLength().toString());
                               int count = 0;
                               for (int h = 0; h < 4; h++){
 
-                                if(theaterGenresFixed.contains(genreList[h])){
+                                if(newFilm.theaterFilmGenres().contains(genreList[h])){
                                   print (genreList[h] + " is a genre!");
                                   count += pointCount[h];
 
                                 }
                               }
-                              print ("Total count: " + count.toString());
+
+                              newFilm.setGenreMatchCount(count);
+                              print(newFilm.theaterFilmName());
+                              print ("Total count: " + newFilm.totalMatch().toString());
 
 
 
 
                             }
+                            listOfFilmsInTheaters.sort((a, b) => b.totalMatch().compareTo(a.totalMatch()));
+                            print("Highest match: " + listOfFilmsInTheaters[0].theaterFilmName());
 
                             setState(() {});
                           },
@@ -375,7 +398,7 @@ class _MyHomePageState extends State<MyHomePage> {
       else genreName[i] =  genreName[i];
     }
     return genreName;
-    }
+  }
 
 
 
@@ -385,3 +408,68 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 }
+
+
+
+
+
+
+
+
+class theaterMovie{
+  String filmPlot;
+  String filmName;
+  String filmReleaseDate;
+  String filmPoster;
+  List filmGenres;
+  int totalGenreCount;
+  String filmLength;
+
+  theaterMovie(
+      this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster, this.filmGenres, this.filmLength) {}
+
+  String theaterFilmName() {
+    return filmName;
+  }
+
+  String theaterFilmPlot() {
+    return filmPlot;
+  }
+
+  String theaterFilmYear() {
+    return filmReleaseDate;
+
+    //  return filmReleaseDate.substring(0, filmReleaseDate.indexOf('-'));
+  }
+
+  String theaterFilmPoster() {
+    return filmPoster;
+  }
+
+  List theaterFilmGenres() {
+    return filmGenres;
+  }
+
+  int theaterFilmLength() {
+    
+    var hour = int.parse(filmLength.substring(3,4));
+    var min = int.parse(filmLength.substring(5,7));
+
+
+    return (hour * 60) + min;
+  }
+
+
+  void setGenreMatchCount (int count){
+    totalGenreCount = count;
+  }
+
+  int totalMatch(){
+    return totalGenreCount;
+  }
+
+
+
+
+}
+
