@@ -1,4 +1,5 @@
 
+import 'package:cs4990_app/genreSearch.dart';
 import 'package:cs4990_app/theaterFind.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: openingPage(),
+        home: MyDiscoverPage(),
         routes: <String, WidgetBuilder>{
           "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
           "/FavoritesPage": (BuildContext context) => new FavoritesPage()
