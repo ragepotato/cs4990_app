@@ -14,6 +14,7 @@ import 'dart:collection';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'searchResults.dart';
 
 
 void main() => runApp(MyApp());
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MyDiscoverPage(),
+        home: openingPage(),
         routes: <String, WidgetBuilder>{
           "/DiscoverPage": (BuildContext context) => new MyDiscoverPage(),
           "/FavoritesPage": (BuildContext context) => new FavoritesPage()
@@ -55,7 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
   var faveFilmsList = [];
   String zipString = '78701';
   int totalTime = 0;
-  _MyHomePageState() {
+//  String searchPlace = "http://data.tmsapi.com/v1.1/movies/showings?startDate=2020-03-28&zip=33602&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+//  var currentDate = "2020-03-28" ;
+//  var now = new DateTime.now();
+
+
+
+
+
+  _MyHomePageState()  {
     // var faveFilmsList = List<filmMovie>();
 
 
@@ -90,7 +99,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
+
+
   }
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,13 +181,43 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: EdgeInsets.only(
                               left: 54.0, top: 25.0, right: 54.0, bottom: 25.0),
                           splashColor: Colors.blueAccent,
-                          onPressed: () {
+                          onPressed: () async{
                             print("New Search activated.");
+                            var now = new DateTime.now();
+                            var currentDate =
+                            new DateFormat("yyyy-MM-dd").format(now);
+                            String searchPlace =
+                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
+                                    currentDate.toString() +
+                                    "&zip=" +
+                                    zipString +
+                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+                            print(searchPlace);
+                            //------
+                            var res = await http.get(searchPlace);
+                            var resLocation = jsonDecode(res.body);
+                            var listOfFilmsInTheaters = [];
+
+                            for (int i = 0; i < resLocation.length; i++) {
+                              print(resLocation[i]["title"]);
+                              //searchTheaterList.add(resLocation[i]["title"]);
+
+                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
+
+                              listOfFilmsInTheaters.add(newFilm);
+
+                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
+                              print(newFilm.theaterFilmGenres());
+                              print("Length: " + newFilm.theaterFilmLength().toString());
+
+                            }
+                            print("Number of films: " + listOfFilmsInTheaters.length.toString());
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      MyDiscoverPage(uid: widget.uid)),
+                                      MyDiscoverPage(uid: widget.uid, theaterMovies: listOfFilmsInTheaters,)),
                             );
                           },
                           child: Text(
@@ -236,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     zipString +
                                     "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
                             print(searchPlace);
+                            //------
                             var res = await http.get(searchPlace);
                             var resLocation = jsonDecode(res.body);
                             var listOfFilmsInTheaters = [];
@@ -252,7 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               print(newFilm.theaterFilmGenres());
                               print("Length: " + newFilm.theaterFilmLength().toString());
                               int count = 0;
-                              for (int h = 0; h < 4; h++){
+                              for (int h = 0; h < genreList.length; h++){
 
                                 if(newFilm.theaterFilmGenres().contains(genreList[h])){
                                   print (genreList[h] + " is a genre!");
@@ -271,6 +320,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             }
                             listOfFilmsInTheaters.sort((a, b) => b.totalMatch().compareTo(a.totalMatch()));
                             print("Highest match: " + listOfFilmsInTheaters[0].theaterFilmName());
+
+
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SearchResultsPage(uid: widget.uid, listMatches: listOfFilmsInTheaters,)),
+                            );
 
                             setState(() {});
                           },
@@ -371,7 +429,7 @@ class _MyHomePageState extends State<MyHomePage> {
         genreName[i] = "Musical";
       }
       else if (genreName[i]  == "Crime drama"){
-        genreName[i] =  genreName;
+        genreName[i] =  genreName[i];
       }
       else if (genreName[i]  == "Romantic comedy"){
         genreName[i] =  "Romance";
@@ -452,7 +510,7 @@ class theaterMovie{
   }
 
   int theaterFilmLength() {
-    
+
     var hour = int.parse(filmLength.substring(3,4));
     var min = int.parse(filmLength.substring(5,7));
 

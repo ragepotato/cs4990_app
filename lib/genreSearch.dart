@@ -41,27 +41,37 @@ class _GenreSearchState extends State<GenreSearchPage> {
   bool isThriller = false;
   bool isWar = false;
   bool isWestern = false;
+
+  void initState() {
+    super.initState();
+    print("open");
+    print(widget.myGenreList);
+    if (widget.myGenreList.contains("Action")) isAction = true;
+    if (widget.myGenreList.contains("Adventure")) isAdventure = true;
+    if (widget.myGenreList.contains("Animated")) isAnimated = true;
+    if (widget.myGenreList.contains("Comedy")) isComedy = true;
+    if (widget.myGenreList.contains("Crime drama")) isCrime = true;
+    if (widget.myGenreList.contains("Documentary")) isDocumentary = true;
+    if (widget.myGenreList.contains("Drama")) isDrama = true;
+    if (widget.myGenreList.contains("Family")) isFamily= true;
+    if (widget.myGenreList.contains("Fantasy")) isFantasy = true;
+    if (widget.myGenreList.contains("Horror")) isHorror = true;
+    if (widget.myGenreList.contains("History")) isHistory = true;
+    if (widget.myGenreList.contains("Musical")) isMusical = true;
+    if (widget.myGenreList.contains("Mystery")) isMystery = true;
+    if (widget.myGenreList.contains("Romance")) isRomance = true;
+    if (widget.myGenreList.contains("Science fiction")) isSciFi = true;
+    if (widget.myGenreList.contains("Thriller")) isThriller = true;
+    if (widget.myGenreList.contains("War"))  isWar = true;
+    if (widget.myGenreList.contains("Western"))  isWestern = true;
+  }
+
+
+
   _GenreSearchState() {
-    //print(widget.myGenreList);
+
     //setState(() {  });
-//      if (widget.theGenreList.contains("Action")) isAction = true;
-//      if (widget.theGenreList.contains("Adventure")) isAdventure = true;
-//      if (widget.theGenreList.contains("Animated")) isAnimated = true;
-//      if (widget.theGenreList.contains("Comedy")) isComedy = true;
-//      if (widget.theGenreList.contains("Crime drama")) isCrime = true;
-//      if (widget.theGenreList.contains("Documentary")) isDocumentary = true;
-//      if (widget.theGenreList.contains("Drama")) isDrama = true;
-//      if (widget.theGenreList.contains("Family")) isFamily= true;
-//      if (widget.theGenreList.contains("Fantasy")) isFantasy = true;
-//      if (widget.theGenreList.contains("Horror")) isHorror = true;
-//      if (widget.theGenreList.contains("History")) isHistory = true;
-//      if (widget.theGenreList.contains("Musical")) isMusical = true;
-//      if (widget.theGenreList.contains("Mystery")) isMystery = true;
-//      if (widget.theGenreList.contains("Romance")) isRomance = true;
-//      if (widget.theGenreList.contains("Science fiction")) isSciFi = true;
-//      if (widget.theGenreList.contains("Thriller")) isThriller = true;
-//      if (widget.theGenreList.contains("War"))  isWar = true;
-//      if (widget.theGenreList.contains("Western"))  isWestern = true;
+
 
 
   }
@@ -73,7 +83,6 @@ class _GenreSearchState extends State<GenreSearchPage> {
       ),
       body: new Column(
         children: <Widget>[
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[

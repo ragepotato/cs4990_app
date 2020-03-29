@@ -7,16 +7,16 @@ import 'main.dart';
 import 'package:flutter_multiselect/flutter_multiselect.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'genreSearch.dart';
-
+import 'searchResults.dart';
 
 
 
 
 class MyDiscoverPage extends StatefulWidget {
-  MyDiscoverPage({Key key, this.title, this.uid}) : super(key: key);
+  MyDiscoverPage({Key key, this.title, this.uid, this.theaterMovies}) : super(key: key);
   final String uid;
   final String title;
-
+  List theaterMovies;
   @override
   _MyDiscoverState createState() => _MyDiscoverState();
 }
@@ -42,6 +42,16 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
   var num2;
   var genreSearchList = [];
   String genreText = "Genres: ";
+  var theaterFilms = [];
+
+  void initState() {
+    super.initState();
+    theaterFilms = widget.theaterMovies;
+    print("Number of movies in theaters: " + theaterFilms.length.toString());
+
+  }
+
+
 
   //create an array of booleans to determine what is being checked off
   @override
@@ -56,9 +66,9 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
           child: Column(
             children: <Widget>[
             Expanded(
-            flex: 10,
+            flex: 8,
             child: Container(
-              padding: EdgeInsets.only(top: 36, bottom: 12),
+              padding: EdgeInsets.only(top: 36, bottom: 8),
               child: Text(
                 'What to Watch?',
                 style: TextStyle(
@@ -69,10 +79,15 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
           ),
 
           Expanded(
-            flex: 10,
+            flex: 15,
             child: Column(
               children: <Widget>[
-               Text(genreText),
+                Container(
+                  padding: EdgeInsets.all(6),
+
+                  child: Text(genreText),
+                ),
+
                Container(
                   padding: EdgeInsets.all(8),
                   child: FlatButton(
@@ -195,7 +210,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
 //                ),
 
         Expanded(
-          flex: 8,
+          flex: 6,
           child: Container(
             color: Colors.white,
             child: Row(
@@ -204,7 +219,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                 Text(
                   'Highest MPAA Rating? ',
                   style: TextStyle(
-                    fontSize: 20.0, // insert your font size here
+                    fontSize: 15.0, // insert your font size here
                   ),
                 ),
                 DropdownButtonHideUnderline(
@@ -368,7 +383,42 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                     '$acclaimSlider');
                 print("How much they care about popularity: " +
                     '$popularitySlider');
+
+                print(theaterFilms.length);
+                for (int h = 0; h < theaterFilms.length; h++){
+                  int count = 0;
+                  print(theaterFilms[h].theaterFilmName());
+                  for (int j = 0; j < genreSearchList.length; j++){
+                    if(theaterFilms[h].theaterFilmGenres().contains(genreSearchList[j])){
+                      print (genreSearchList[j] + " is a genre!");
+                      count += 1;
+
+                    }
+                  }
+                  theaterFilms[h].setGenreMatchCount(count);
+
+                  print ("Total count: " + theaterFilms[h].totalMatch().toString());
+                }
+
+
+                theaterFilms.sort((a, b) => b.totalMatch().compareTo(a.totalMatch()));
+            print("Highest match: " + theaterFilms[0].theaterFilmName());
+
+
+
+
+
                 print(genreSearchList);
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SearchResultsPage(uid: widget.uid, listMatches: theaterFilms,)),
+                );
+
+
+
                 //Navigator.pop(context);
               },
               child: Text(
