@@ -73,6 +73,15 @@ class _MyHomePageState extends State<MyHomePage> {
       currentUser = user.uid;
       ref.child(currentUser + "/location/zipCode").once().then((ds) {
         zipString = ds.value;
+        if (ds.value == null){
+          ref.child(currentUser + "/location/").set({
+            "zipCode": "33602",
+          }).then((res) {
+            print("Zip code changed.");
+          }).catchError((e) {
+            print("Failed due to " + e);
+          });
+        }
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
       });
@@ -85,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           //movieGenres = (v['genres']);
           var theFilm = new filmMovie(
-              k, v['summary'], v['releaseYear'], v['posterPath'], v['genres'], v['runTime']);
+              k, v['summary'], v['releaseYear'], v['posterPath'], v['genres'], v['runTime'], v['coverPath'], v['averageRating']);
           faveFilmsList.add(theFilm);
 
         });
@@ -122,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: new BoxDecoration(
               image: new DecorationImage(
                 //image: new AssetImage("Parasite-poster-2.jpg"),
-                image: new AssetImage("lalaland1.jpg"),
+                image: new AssetImage("parasite1.jpg"),
                 //image: new AssetImage("parasite1.jpg"),
                 fit: BoxFit.cover,
               ),
@@ -393,6 +402,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: () {
                             print("Search by preferences activated.");
                             print(widget.uid);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(

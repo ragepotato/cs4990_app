@@ -57,42 +57,60 @@ class _SearchResultsState extends State<SearchResultsPage> {
                     itemBuilder: (BuildContext ctxt, int Index) {
                       //key: Key(theaterMatches[Index].theaterFilmName()),
                       return Container(
-                          color: Colors.lightBlueAccent,
-                          child: new ExpansionTile(
-//                            onTap: (){
-//                              new Card(
-//                              );
-//                            },
-                            //leading: Icon(Icons.laptop_chromebook),
-                            leading: CircleAvatar(
-//                              backgroundImage: NetworkImage(
-//                                  "https://image.tmdb.org/t/p/w500" +
-//                                      litems[Index].getFilmPoster()),
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.keyboard_arrow_down),
-//                                onPressed: (){
-//                                  setState(() {
-//
-//                                  });
-//                                },
-                            ),
-                            title: Text((Index + 1).toString() +
-                                '. ' +
-                                theaterMatches[Index].theaterFilmName()),
+                          padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                      image: new DecorationImage(
+                      image: NetworkImage("https://image.tmdb.org/t/p/original/fp6X6yhgcxzxCpmM0EVC6V9B8XB.jpg"),
+                      fit: BoxFit.cover,
+                        alignment: FractionalOffset.topCenter,
+                      ),),
+                          //color: Colors.lightBlueAccent,
+                          child: new ListTile(
+                          title: Text((Index + 1).toString() +
+                               '. ' +
+                               theaterMatches[Index].theaterFilmName()),
 
-                            children: <Widget>[
-                              //print(_getSummary());
-                              Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text("Match count: " + theaterMatches[Index].totalMatch().toString()),
-                              ),
-                              Container(
-                                padding: EdgeInsets.all(12),
-                                child: Text(theaterMatches[Index].theaterFilmPlot()),
-                              ),
-                            ],
+
+                            
+
                           ),
+
+
+//                          child: new ExpansionTile(
+////                            onTap: (){
+////                              new Card(
+////                              );
+////                            },
+//                            //leading: Icon(Icons.laptop_chromebook),
+//                            leading: CircleAvatar(
+////                              backgroundImage: NetworkImage(
+////                                  "https://image.tmdb.org/t/p/w500" +
+////                                      litems[Index].getFilmPoster()),
+//                            ),
+//                            trailing: IconButton(
+//                              icon: Icon(Icons.keyboard_arrow_down),
+////                                onPressed: (){
+////                                  setState(() {
+////
+////                                  });
+////                                },
+//                            ),
+//                            title: Text((Index + 1).toString() +
+//                                '. ' +
+//                                theaterMatches[Index].theaterFilmName()),
+//
+//                            children: <Widget>[
+//                              //print(_getSummary());
+//                              Container(
+//                                padding: EdgeInsets.all(12),
+//                                child: Text("Match count: " + theaterMatches[Index].totalMatch().toString()),
+//                              ),
+//                              Container(
+//                                padding: EdgeInsets.all(12),
+//                                child: Text(theaterMatches[Index].theaterFilmPlot()),
+//                              ),
+//                            ],
+//                          ),
                         );
 
                     })),
