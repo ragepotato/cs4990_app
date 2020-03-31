@@ -60,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //  var currentDate = "2020-03-28" ;
 //  var now = new DateTime.now();
 
+  var listOfFilmsInTheaters = [];
 
 
 
@@ -71,8 +72,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _auth.currentUser().then((user) {
       currentUser = user.uid;
-      ref.child(currentUser + "/location/zipCode").once().then((ds) {
-        zipString = ds.value;
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ref.child(currentUser + "/location/zipCode").once().then((ds) async{
         if (ds.value == null){
           ref.child(currentUser + "/location/").set({
             "zipCode": "33602",
@@ -82,9 +95,51 @@ class _MyHomePageState extends State<MyHomePage> {
             print("Failed due to " + e);
           });
         }
+        zipString = ds.value;
+
+
+        var now = new DateTime.now();
+        var currentDate =
+        new DateFormat("yyyy-MM-dd").format(now);
+        String searchPlace =
+            "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
+                currentDate.toString() +
+                "&zip=" +
+                zipString +
+                "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+        print(searchPlace);
+        //------
+        var res = await http.get(searchPlace);
+        var resLocation = jsonDecode(res.body);
+
+
+        for (int i = 0; i < resLocation.length; i++) {
+          print(resLocation[i]["title"]);
+          //searchTheaterList.add(resLocation[i]["title"]);
+
+          var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
+
+          listOfFilmsInTheaters.add(newFilm);
+
+          //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
+          print(newFilm.theaterFilmGenres());
+          print("Length: " + newFilm.theaterFilmLength().toString());
+
+        }
+        print("Number of films: " + listOfFilmsInTheaters.length.toString());
+
+
+        print("Done with 1.");
+
+
+
+
+
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
       });
+
+
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
         ds.value.forEach((k, v) {
 //                                  movieTitle = k;
@@ -99,8 +154,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
         });
 
+
+
+
+
+
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
+          print("Done with 2.");
         });
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
@@ -108,6 +169,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
+
+
 
 
   }
@@ -192,35 +255,35 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () async{
                             print("New Search activated.");
-                            var now = new DateTime.now();
-                            var currentDate =
-                            new DateFormat("yyyy-MM-dd").format(now);
-                            String searchPlace =
-                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
-                                    currentDate.toString() +
-                                    "&zip=" +
-                                    zipString +
-                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
-                            print(searchPlace);
-                            //------
-                            var res = await http.get(searchPlace);
-                            var resLocation = jsonDecode(res.body);
-                            var listOfFilmsInTheaters = [];
-
-                            for (int i = 0; i < resLocation.length; i++) {
-                              print(resLocation[i]["title"]);
-                              //searchTheaterList.add(resLocation[i]["title"]);
-
-                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
-
-                              listOfFilmsInTheaters.add(newFilm);
-
-                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-                              print(newFilm.theaterFilmGenres());
-                              print("Length: " + newFilm.theaterFilmLength().toString());
-
-                            }
-                            print("Number of films: " + listOfFilmsInTheaters.length.toString());
+//                            var now = new DateTime.now();
+//                            var currentDate =
+//                            new DateFormat("yyyy-MM-dd").format(now);
+//                            String searchPlace =
+//                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
+//                                    currentDate.toString() +
+//                                    "&zip=" +
+//                                    zipString +
+//                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+//                            print(searchPlace);
+//                            //------
+//                            var res = await http.get(searchPlace);
+//                            var resLocation = jsonDecode(res.body);
+//                            var listOfFilmsInTheaters = [];
+//
+//                            for (int i = 0; i < resLocation.length; i++) {
+//                              print(resLocation[i]["title"]);
+//                              //searchTheaterList.add(resLocation[i]["title"]);
+//
+//                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
+//
+//                              listOfFilmsInTheaters.add(newFilm);
+//
+//                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
+//                              print(newFilm.theaterFilmGenres());
+//                              print("Length: " + newFilm.theaterFilmLength().toString());
+//
+//                            }
+//                            print("Number of films: " + listOfFilmsInTheaters.length.toString());
 
                             Navigator.push(
                               context,
@@ -294,38 +357,34 @@ class _MyHomePageState extends State<MyHomePage> {
                                     "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
                             print(searchPlace);
                             //------
-                            var res = await http.get(searchPlace);
-                            var resLocation = jsonDecode(res.body);
-                            var listOfFilmsInTheaters = [];
+                            //var res = await http.get(searchPlace);
+                            //var resLocation = jsonDecode(res.body);
+                            //listOfFilmsInTheaters = [];
 
-                            for (int i = 0; i < resLocation.length; i++) {
-                              print(resLocation[i]["title"]);
+                            for (int i = 0; i < listOfFilmsInTheaters.length; i++) {
+                              //print(resLocation[i]["title"]);
                               //searchTheaterList.add(resLocation[i]["title"]);
 
-                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
+                              //var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
 
-                              listOfFilmsInTheaters.add(newFilm);
+                              //listOfFilmsInTheaters.add(newFilm);
 
                               //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-                              print(newFilm.theaterFilmGenres());
-                              print("Length: " + newFilm.theaterFilmLength().toString());
+                              //print(newFilm.theaterFilmGenres());
+                              //print("Length: " + newFilm.theaterFilmLength().toString());
                               int count = 0;
                               for (int h = 0; h < genreList.length; h++){
 
-                                if(newFilm.theaterFilmGenres().contains(genreList[h])){
+                                if(listOfFilmsInTheaters[i].theaterFilmGenres().contains(genreList[h])){
                                   print (genreList[h] + " is a genre!");
                                   count += pointCount[h];
 
                                 }
                               }
 
-                              newFilm.setGenreMatchCount(count);
-                              print(newFilm.theaterFilmName());
-                              print ("Total count: " + newFilm.totalMatch().toString());
-
-
-
-
+                              listOfFilmsInTheaters[i].setGenreMatchCount(count);
+                              print(listOfFilmsInTheaters[i].theaterFilmName());
+                              print ("Total count: " + listOfFilmsInTheaters[i].totalMatch().toString());
                             }
                             listOfFilmsInTheaters.sort((a, b) => b.totalMatch().compareTo(a.totalMatch()));
                             print("Highest match: " + listOfFilmsInTheaters[0].theaterFilmName());
@@ -493,6 +552,7 @@ class theaterMovie{
   List filmGenres;
   int totalGenreCount;
   String filmLength;
+  String filmRating;
 
   theaterMovie(
       this.filmName, this.filmPlot, this.filmReleaseDate, this.filmPoster, this.filmGenres, this.filmLength) {}
@@ -537,8 +597,9 @@ class theaterMovie{
     return totalGenreCount;
   }
 
-
+  String theaterFilmRating(){
+    return filmRating;
+  }
 
 
 }
-

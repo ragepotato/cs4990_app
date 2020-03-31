@@ -181,7 +181,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
               for (int i = 0; i < howMany; i++) {
                 String yearDate = '';
-                if (resSummary['results'][i]['release_date'] == null) {
+                if (resSummary['results'][i]['release_date'] == null || resSummary['results'][i]['release_date'] == "") {
                   yearDate = '?';
                 } else {
                   yearDate = resSummary['results'][i]['release_date'].substring(
@@ -421,6 +421,7 @@ class _FavoritesState extends State<FavoritesPage> {
         FlatButton(
           child: Text("SAVE"),
           onPressed: () {
+            print("MOVING ON---------------");
             Navigator.push(
                 context,
                 MaterialPageRoute(
