@@ -60,7 +60,7 @@ class _FavoritesState extends State<FavoritesPage> {
     _auth.currentUser().then((user) {
       currentUser = user.uid;
 
-      ref.child(currentUser + "/location/zipCode").once().then((ds) {
+      ref.child(currentUser + "/location/currentZipCode").once().then((ds) {
         zipString = ds.value;
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
@@ -138,7 +138,7 @@ class _FavoritesState extends State<FavoritesPage> {
                     }
                   });
                   ref.child(currentUser + "/location/").set({
-                    "zipCode": zipString,
+                    "currentZipCode": zipString,
                   }).then((res) {
                     print("Zip code changed.");
                   }).catchError((e) {
