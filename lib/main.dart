@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _auth.currentUser().then((user) {
       currentUser = user.uid;
 
-      ref.child(currentUser + "/location/currentZipCode").once().then((ds){
+      ref.child(currentUser + "/location/currentZipCode").once().then((ds) {
         if (ds.value == null) {
           ref.child(currentUser + "/location/").set({
             "currentZipCode": "33602",
@@ -90,10 +90,16 @@ class _MyHomePageState extends State<MyHomePage> {
 //
 //        });
 
-
-        ref.child(currentUser + "/location/zipCode/" + zipString + "/" + currentDate).once().then((ds) async {
-
-          if (ds.value == null){             //date is not there
+        ref
+            .child(currentUser +
+                "/location/zipCode/" +
+                zipString +
+                "/" +
+                currentDate)
+            .once()
+            .then((ds) async {
+          if (ds.value == null) {
+            //date is not there
             print("--------have to retrieve data from GraceNote---------");
             String searchPlace =
                 "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
@@ -110,19 +116,21 @@ class _MyHomePageState extends State<MyHomePage> {
             for (int i = 0; i < resLocation.length; i++) {
               print(resLocation[i]["title"]);
 
-
-              var specificRes = await http.get("https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=" + resLocation[i]['title'] +"&page=1&include_adult=false&year=" + resLocation[i].toString());
+              var specificRes = await http.get(
+                  "https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=" +
+                      resLocation[i]['title'] +
+                      "&page=1&include_adult=false&year=" +
+                      resLocation[i].toString());
               var specResLocation = jsonDecode(specificRes.body);
               String theRating = "";
 //              if(resLocation[i].containsKey("ratings")){
 //                theRating = "Not here";
 //              }
 
-              if (resLocation[i]["ratings"] == null || resLocation[i]["ratings"] == ""){
+              if (resLocation[i]["ratings"] == null ||
+                  resLocation[i]["ratings"] == "") {
                 theRating = "unrated";
-
-              }
-              else{
+              } else {
                 theRating = resLocation[i]["ratings"][0]["code"];
               }
 
@@ -130,12 +138,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
               ref
                   .child(currentUser +
-                  "/location/zipCode/" +
-                  zipString +
-                  "/" +
-                  currentDate +
-                  "/" +
-                  resLocation[i]["title"])
+                      "/location/zipCode/" +
+                      zipString +
+                      "/" +
+                      currentDate +
+                      "/" +
+                      resLocation[i]["title"])
                   .set({
                 "summary": specResLocation["results"][0]["overview"],
                 "releaseYear": resLocation[i]["releaseYear"].toString(),
@@ -146,9 +154,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 "showtimes": resLocation[i]["showtimes"],
                 "coverPath": specResLocation["results"][0]["backdrop_path"],
 
-                "averageRating": specResLocation["results"][0]["vote_average"],
+                "averageRating": specResLocation["results"][0]["vote_average"].toString(),
 
-
+                //
               }).then((res) {
                 print("ADDED " + resLocation[i]["title"]);
               }).catchError((e) {
@@ -157,11 +165,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
               var newFilm = new theaterMovie(
                   resLocation[i]["title"],
-                  resLocation[i]["longDescription"],
+                  specResLocation["results"][0]["overview"],
                   resLocation[i]["releaseYear"].toString(),
-                  resLocation[i]["preferredImage"]["uri"],
+                  specResLocation["results"][0]["poster_path"],
                   getTheaterGenre(resLocation[i]['genres']),
-                  resLocation[i]["runTime"]);
+                  resLocation[i]["runTime"],
+                  theRating,
+                  specResLocation["results"][0]["backdrop_path"],
+                  specResLocation["results"][0]["vote_average"].toString()
+              );
 
               listOfFilmsInTheaters.add(newFilm);
 
@@ -173,16 +185,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 "Number of films: " + listOfFilmsInTheaters.length.toString());
 
             print("Done with 1.");
-
-
-
-
-          }
-
-          else{
+          } else {
             print("Data is already here.");
 
-                        print("------data is ready to go------");
+            print("------data is ready to go------");
             print(currentUser +
                 "/location/zipCode/" +
                 zipString +
@@ -190,35 +196,49 @@ class _MyHomePageState extends State<MyHomePage> {
                 currentDate.toString());
             ref
                 .child(currentUser +
-                "/location/zipCode/" +
-                zipString +
-                "/" +
+                    "/location/zipCode/" +
+                    zipString +
+                    "/" +
                     currentDate.toString())
                 .once()
                 .then((ds) {
               ds.value.forEach((k, v) {
-
                 var theFilm = new theaterMovie(
-                    k, v['summary'], v['releaseYear'], v['posterPath'], v['genres'], v['runTime']);
+                    k,
+                    v['summary'],
+                    v['releaseYear'],
+                    v['posterPath'],
+                    v['genres'],
+                    v['runTime'],
+                    v['mpaaRating'],
+                    v['coverPath'],
+                    v['averageRating']
+                );
                 listOfFilmsInTheaters.add(theFilm);
               });
-              print("list of films in theaters length: " + listOfFilmsInTheaters.length.toString());
+//        this.filmName,
+//        this.filmPlot,
+//        this.filmReleaseDate,
+//        this.filmPoster,
+//        this.filmGenres,
+//        this.filmLength,
+//        this.filmRating,
+//        this.filmCover,
+//        this.filmAvgScore
 
+              print("list of films in theaters length: " +
+                  listOfFilmsInTheaters.length.toString());
             }).catchError((e) {
               print("LALALALALALALALA " + currentUser + " --- " + e.toString());
             });
           }
-
         }).catchError((e) {
           print("This failed due to " + e);
         });
-
-
-    }).catchError((e) {
-      print("None available for 22222" + currentUser + " --- " + e.toString());
-    });
-
-
+      }).catchError((e) {
+        print(
+            "None available for 22222" + currentUser + " --- " + e.toString());
+      });
 
       //-------------------uncomment---------------------
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
@@ -241,19 +261,20 @@ class _MyHomePageState extends State<MyHomePage> {
           faveFilmsList.add(theFilm);
         });
 
+
+
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
           print("Done with 2.");
         });
       }).catchError((e) {
-        print("None available for 333333" + currentUser + " --- " + e.toString());
+        print(
+            "None available for 333333" + currentUser + " --- " + e.toString());
       });
 // -------------------uncomment---------------------
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
-
-
   }
 
   @override
@@ -423,16 +444,16 @@ class _MyHomePageState extends State<MyHomePage> {
                             print("2. " + genreList[1]);
                             print("3. " + genreList[2]);
 
-                            var now = new DateTime.now();
-                            var currentDate =
-                                new DateFormat("yyyy-MM-dd").format(now);
-                            String searchPlace =
-                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
-                                    currentDate.toString() +
-                                    "&zip=" +
-                                    zipString +
-                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
-                            print(searchPlace);
+//                            var now = new DateTime.now();
+//                            var currentDate =
+//                                new DateFormat("yyyy-MM-dd").format(now);
+//                            String searchPlace =
+//                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
+//                                    currentDate.toString() +
+//                                    "&zip=" +
+//                                    zipString +
+//                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
+//                            print(searchPlace);
                             //------
                             //var res = await http.get(searchPlace);
                             //var resLocation = jsonDecode(res.body);
@@ -521,13 +542,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            print("Changing theater.");
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      TheaterFindPage(uid: widget.uid)),
-                            );
+                            int thisIt = 0;
+                            print(thisIt.toString());
+                            print(double.parse(thisIt.toString()));
+//                            Navigator.push(
+//                              context,
+//                              MaterialPageRoute(
+//                                  builder: (context) =>
+//                                      TheaterFindPage(uid: widget.uid)),
+//                            );
                           },
                           child: Text(
                             "CHANGE THEATER",
@@ -615,9 +638,23 @@ class theaterMovie {
   int totalGenreCount;
   String filmLength;
   String filmRating;
+  List filmShowtimes;
+  String filmCover;
+  String filmAvgScore;
 
-  theaterMovie(this.filmName, this.filmPlot, this.filmReleaseDate,
-      this.filmPoster, this.filmGenres, this.filmLength) {}
+  //rating, showtimes, coverPath, averageRating
+
+  theaterMovie(
+      this.filmName,
+      this.filmPlot,
+      this.filmReleaseDate,
+      this.filmPoster,
+      this.filmGenres,
+      this.filmLength,
+      this.filmRating,
+      this.filmCover,
+      this.filmAvgScore
+     ) {}
 
   String theaterFilmName() {
     return filmName;
@@ -658,5 +695,17 @@ class theaterMovie {
 
   String theaterFilmRating() {
     return filmRating;
+  }
+
+  List theaterShowtimes() {
+    return filmShowtimes;
+  }
+
+  String theaterCover() {
+    return filmCover;
+  }
+
+  String theaterScore() {
+    return filmAvgScore;
   }
 }

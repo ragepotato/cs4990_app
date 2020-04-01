@@ -58,9 +58,10 @@ class _SearchResultsState extends State<SearchResultsPage> {
                       //key: Key(theaterMatches[Index].theaterFilmName()),
                       return Container(
                           padding: EdgeInsets.all(20),
+                      height: 200,
                       decoration: BoxDecoration(
                       image: new DecorationImage(
-                      image: NetworkImage("https://image.tmdb.org/t/p/original/fp6X6yhgcxzxCpmM0EVC6V9B8XB.jpg"),
+                      image: NetworkImage("https://image.tmdb.org/t/p/w500" + theaterMatches[Index].theaterCover()),
                       fit: BoxFit.cover,
                         alignment: FractionalOffset.topCenter,
                       ),),
