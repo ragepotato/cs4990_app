@@ -53,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var faveFilmsList = [];
   String zipString = '78701';
   int totalTime = 0;
+  double averageRating = 0.0;
 
 //  String searchPlace = "http://data.tmsapi.com/v1.1/movies/showings?startDate=2020-03-28&zip=33602&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
 //  var currentDate = "2020-03-28" ;
@@ -148,13 +149,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 "summary": specResLocation["results"][0]["overview"],
                 "releaseYear": resLocation[i]["releaseYear"].toString(),
                 "posterPath": specResLocation["results"][0]["poster_path"],
-                "genres": getTheaterGenre(resLocation[i]['genres']),
+                "genres": getGenre(specResLocation["results"][0]['genre_ids']),
                 "runTime": resLocation[i]["runTime"],
                 "mpaaRating": theRating,
                 "showtimes": resLocation[i]["showtimes"],
                 "coverPath": specResLocation["results"][0]["backdrop_path"],
 
-                "averageRating": specResLocation["results"][0]["vote_average"].toString(),
+                "averageRating":
+                    specResLocation["results"][0]["vote_average"].toString(),
 
                 //
               }).then((res) {
@@ -168,12 +170,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   specResLocation["results"][0]["overview"],
                   resLocation[i]["releaseYear"].toString(),
                   specResLocation["results"][0]["poster_path"],
-                  getTheaterGenre(resLocation[i]['genres']),
+                  getGenre(specResLocation["results"][0]['genre_ids']),
                   resLocation[i]["runTime"],
                   theRating,
                   specResLocation["results"][0]["backdrop_path"],
-                  specResLocation["results"][0]["vote_average"].toString()
-              );
+                  specResLocation["results"][0]["vote_average"].toString());
 
               listOfFilmsInTheaters.add(newFilm);
 
@@ -212,19 +213,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     v['runTime'],
                     v['mpaaRating'],
                     v['coverPath'],
-                    v['averageRating']
-                );
+                    v['averageRating']);
                 listOfFilmsInTheaters.add(theFilm);
               });
-//        this.filmName,
-//        this.filmPlot,
-//        this.filmReleaseDate,
-//        this.filmPoster,
-//        this.filmGenres,
-//        this.filmLength,
-//        this.filmRating,
-//        this.filmCover,
-//        this.filmAvgScore
 
               print("list of films in theaters length: " +
                   listOfFilmsInTheaters.length.toString());
@@ -260,8 +251,6 @@ class _MyHomePageState extends State<MyHomePage> {
               v['averageRating']);
           faveFilmsList.add(theFilm);
         });
-
-
 
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
@@ -350,35 +339,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () async {
                             print("New Search activated.");
-//                            var now = new DateTime.now();
-//                            var currentDate =
-//                            new DateFormat("yyyy-MM-dd").format(now);
-//                            String searchPlace =
-//                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
-//                                    currentDate.toString() +
-//                                    "&zip=" +
-//                                    zipString +
-//                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
-//                            print(searchPlace);
-//                            //------
-//                            var res = await http.get(searchPlace);
-//                            var resLocation = jsonDecode(res.body);
-//                            var listOfFilmsInTheaters = [];
-//
-//                            for (int i = 0; i < resLocation.length; i++) {
-//                              print(resLocation[i]["title"]);
-//                              //searchTheaterList.add(resLocation[i]["title"]);
-//
-//                              var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
-//
-//                              listOfFilmsInTheaters.add(newFilm);
-//
-//                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-//                              print(newFilm.theaterFilmGenres());
-//                              print("Length: " + newFilm.theaterFilmLength().toString());
-//
-//                            }
-//                            print("Number of films: " + listOfFilmsInTheaters.length.toString());
 
                             Navigator.push(
                               context,
@@ -408,9 +368,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             print("List length: " +
                                 faveFilmsList.length.toString());
                             totalTime = 0;
+                            averageRating = 0.0;
+                            bool acclaimMatters = false;
+
                             for (int w = 0; w < faveFilmsList.length; w++) {
-                              //print(faveFilmsList[w].getFilmName());
-                              //print(faveFilmsList[w].getFilmGenres());
+                              averageRating += faveFilmsList[w].getFilmScore();
 
                               totalTime += faveFilmsList[w].getLength();
 
@@ -425,10 +387,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               });
                             }
 
-                            double averageTime =
-                                totalTime / faveFilmsList.length;
+                            int averageTime =
+                                (totalTime / faveFilmsList.length).round();
+                            averageRating = (averageRating / faveFilmsList.length);
+                            if (averageRating > 7.0) acclaimMatters = true;
+
                             print("Average time of favorites: " +
                                 averageTime.toString());
+                            print("Average rating of favorites: " +
+                                averageRating.toString());
 
                             var sortedKeys = genreMap.keys
                                 .toList(growable: false)
@@ -440,51 +407,44 @@ class _MyHomePageState extends State<MyHomePage> {
                             var genreList = sortedMap.keys.toList();
                             var pointCount = sortedMap.values.toList();
                             print(sortedMap);
-                            print("1. " + genreList[0]);
-                            print("2. " + genreList[1]);
-                            print("3. " + genreList[2]);
-
-//                            var now = new DateTime.now();
-//                            var currentDate =
-//                                new DateFormat("yyyy-MM-dd").format(now);
-//                            String searchPlace =
-//                                "http://data.tmsapi.com/v1.1/movies/showings?startDate=" +
-//                                    currentDate.toString() +
-//                                    "&zip=" +
-//                                    zipString +
-//                                    "&api_key=ewgmhk7qeyw8jcwrzspw8k2w";
-//                            print(searchPlace);
-                            //------
-                            //var res = await http.get(searchPlace);
-                            //var resLocation = jsonDecode(res.body);
-                            //listOfFilmsInTheaters = [];
 
                             for (int i = 0;
                                 i < listOfFilmsInTheaters.length;
                                 i++) {
-                              //print(resLocation[i]["title"]);
-                              //searchTheaterList.add(resLocation[i]["title"]);
+                              listOfFilmsInTheaters[i].setGenreMatchCount(0);
 
-                              //var newFilm = new theaterMovie(resLocation[i]["title"], resLocation[i]["longDescription"], resLocation[i]["releaseYear"].toString(), resLocation[i]["preferredImage"]["uri"], getTheaterGenre(resLocation[i]['genres']), resLocation[i]["runTime"]);
+                              if (acclaimMatters && double.parse(listOfFilmsInTheaters[i].theaterScore()) >= 7.0){
+                                listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
+                                print("We care about acclaim! " + listOfFilmsInTheaters[i].theaterFilmName() + " is acclaimed. + 2");
+                              }
 
-                              //listOfFilmsInTheaters.add(newFilm);
 
-                              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-                              //print(newFilm.theaterFilmGenres());
-                              //print("Length: " + newFilm.theaterFilmLength().toString());
-                              int count = 0;
+                              if (listOfFilmsInTheaters[i].theaterFilmLength() <=
+                                      (averageTime + 15) &&
+                                  listOfFilmsInTheaters[i].theaterFilmLength() >=
+                                      (averageTime - 15)) {
+                                print(listOfFilmsInTheaters[i].theaterFilmName() + " is within 15 minutes. + 2");
+                                listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
+                              }
+
+
+                                int count = 0;
                               for (int h = 0; h < genreList.length; h++) {
                                 if (listOfFilmsInTheaters[i]
                                     .theaterFilmGenres()
                                     .contains(genreList[h])) {
-                                  print(genreList[h] + " is a genre!");
+                                  print(genreList[h] + " is a genre! +" + pointCount[h].toString());
                                   count += pointCount[h];
                                 }
                               }
 
                               listOfFilmsInTheaters[i]
-                                  .setGenreMatchCount(count);
-                              print(listOfFilmsInTheaters[i].theaterFilmName());
+                                  .setGenreMatchCount(count + listOfFilmsInTheaters[i].totalMatch());
+                              print(listOfFilmsInTheaters[i].theaterFilmName() +
+                                  ": " +
+                                  listOfFilmsInTheaters[i]
+                                      .theaterFilmLength()
+                                      .toString());
                               print("Total count: " +
                                   listOfFilmsInTheaters[i]
                                       .totalMatch()
@@ -542,9 +502,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            int thisIt = 0;
-                            print(thisIt.toString());
-                            print(double.parse(thisIt.toString()));
+                            print(listOfFilmsInTheaters[0].theaterFilmLength());
+
 //                            Navigator.push(
 //                              context,
 //                              MaterialPageRoute(
@@ -601,30 +560,52 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  List getTheaterGenre(List genreName) {
-    for (int i = 0; i < genreName.length; i++) {
-      if (genreName[i] == "Music" || genreName[i] == "Musical comedy") {
-        genreName[i] = "Musical";
-      } else if (genreName[i] == "Crime drama") {
-        genreName[i] = genreName[i];
-      } else if (genreName[i] == "Romantic comedy") {
-        genreName[i] = "Romance";
-      } else if (genreName[i].contains("comedy")) {
-        genreName[i] = "Comedy";
-      } else if (genreName[i] == "Suspense") {
-        genreName[i] = "Thriller";
-      } else if (genreName[i] == "Children") {
-        genreName[i] = "Family";
-      } else if (genreName[i] == "Biography" ||
-          genreName[i] == "Historical drama") {
-        genreName[i] = "History";
-      } else if (genreName[i] == "Anime") {
+  List getGenre(List genreID) {
+    List<String> genreName = List(genreID.length);
+    for (int i = 0; i < genreID.length; i++) {
+      if (genreID[i] == 28) {
+        genreName[i] = "Action";
+      } else if (genreID[i] == 12) {
+        genreName[i] = "Adventure";
+      } else if (genreID[i] == 16) {
         genreName[i] = "Animated";
-      } else if (genreName[i].contains("drama")) {
+      } else if (genreID[i] == 35) {
+        genreName[i] = "Comedy";
+      } else if (genreID[i] == 80) {
+        genreName[i] = "Crime drama";
+      } else if (genreID[i] == 99) {
+        genreName[i] = "Documentary";
+      } else if (genreID[i] == 18) {
         genreName[i] = "Drama";
+      } else if (genreID[i] == 10751) {
+        genreName[i] = "Family";
+      } else if (genreID[i] == 14) {
+        genreName[i] = "Fantasy";
+      } else if (genreID[i] == 27) {
+        genreName[i] = "Horror";
+      } else if (genreID[i] == 36) {
+        genreName[i] = "History";
+      } else if (genreID[i] == 10402) {
+        genreName[i] = "Musical";
+      } else if (genreID[i] == 9648) {
+        genreName[i] = "Mystery";
+      } else if (genreID[i] == 10749) {
+        genreName[i] = "Romance";
+      } else if (genreID[i] == 878) {
+        genreName[i] = "Science fiction";
+      } else if (genreID[i] == 10770) {
+        genreName[i] = "TV Movie";
+      } else if (genreID[i] == 53) {
+        genreName[i] = "Thriller";
+      } else if (genreID[i] == 10752) {
+        genreName[i] = "War";
+      } else if (genreID[i] == 37) {
+        genreName[i] = "Western";
       } else
-        genreName[i] = genreName[i];
+        genreName[i] = "x";
+      print(genreName[i]);
     }
+
     return genreName;
   }
 }
@@ -653,8 +634,7 @@ class theaterMovie {
       this.filmLength,
       this.filmRating,
       this.filmCover,
-      this.filmAvgScore
-     ) {}
+      this.filmAvgScore) {}
 
   String theaterFilmName() {
     return filmName;

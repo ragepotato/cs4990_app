@@ -19,22 +19,16 @@ class SearchResultsPage extends StatefulWidget {
 }
 
 class _SearchResultsState extends State<SearchResultsPage> {
-
   var theaterMatches = [];
 
   void initState() {
     super.initState();
     theaterMatches = widget.listMatches;
     print("Number of movies in theaters: " + theaterMatches.length.toString());
-
   }
 
-
-
   _FavoritesState() {
-
     //movieGenres.clear();
-
   }
 
   final TextEditingController eCtrl = new TextEditingController();
@@ -47,78 +41,65 @@ class _SearchResultsState extends State<SearchResultsPage> {
 //
 //        ),
         body: new Column(
-          children: <Widget>[
-            Expanded(
-                child: ListView.separated(
-                    padding: const EdgeInsets.all(8),
-                    itemCount: theaterMatches.length,
-                    separatorBuilder: (BuildContext context, int Index) =>
-                        Divider(),
-                    itemBuilder: (BuildContext ctxt, int Index) {
-                      //key: Key(theaterMatches[Index].theaterFilmName()),
-                      return Container(
-                          padding: EdgeInsets.all(20),
-                      height: 200,
-                      decoration: BoxDecoration(
-                      image: new DecorationImage(
-                      image: NetworkImage("https://image.tmdb.org/t/p/w500" + theaterMatches[Index].theaterCover()),
-                      fit: BoxFit.cover,
-                        alignment: FractionalOffset.topCenter,
-                      ),),
-                          //color: Colors.lightBlueAccent,
-                          child: new ListTile(
-                          title: Text((Index + 1).toString() +
-                               '. ' +
-                               theaterMatches[Index].theaterFilmName()),
-
-
-                            
-
+      children: <Widget>[
+        Expanded(
+            child: ListView.separated(
+                padding: const EdgeInsets.all(8),
+                itemCount: theaterMatches.length,
+                separatorBuilder: (BuildContext context, int Index) =>
+                    Divider(),
+                itemBuilder: (BuildContext ctxt, int Index) {
+                  //key: Key(theaterMatches[Index].theaterFilmName()),
+                  return Column(
+                    children: <Widget>[
+                      Text((Index + 1).toString() +
+                          '. ' +
+                          theaterMatches[Index].theaterFilmName()),
+                      Container(
+                        padding: EdgeInsets.all(20),
+                        height: 200,
+                        decoration: BoxDecoration(
+                          image: new DecorationImage(
+                            image: NetworkImage(
+                                "https://image.tmdb.org/t/p/w500" +
+                                    theaterMatches[Index].theaterCover()),
+                            fit: BoxFit.cover,
+                            alignment: FractionalOffset.topCenter,
                           ),
+                        ),
+                        //color: Colors.lightBlueAccent,
+                        child: new ListTile(
+                          leading: Icon(Icons.album),
+                          title: Text((Index + 1).toString() +
+                              '. ' +
+                              theaterMatches[Index].theaterFilmName()),
+                        ),
+                      ),
+                      ExpansionTile(
+                        title: Text("Get Details"),
+                        children: <Widget>[
+                          Text(theaterMatches[Index].theaterFilmPlot()),
 
-
-//                          child: new ExpansionTile(
-////                            onTap: (){
-////                              new Card(
-////                              );
-////                            },
-//                            //leading: Icon(Icons.laptop_chromebook),
-//                            leading: CircleAvatar(
-////                              backgroundImage: NetworkImage(
-////                                  "https://image.tmdb.org/t/p/w500" +
-////                                      litems[Index].getFilmPoster()),
-//                            ),
-//                            trailing: IconButton(
-//                              icon: Icon(Icons.keyboard_arrow_down),
-////                                onPressed: (){
-////                                  setState(() {
-////
-////                                  });
-////                                },
-//                            ),
-//                            title: Text((Index + 1).toString() +
-//                                '. ' +
-//                                theaterMatches[Index].theaterFilmName()),
-//
-//                            children: <Widget>[
-//                              //print(_getSummary());
-//                              Container(
-//                                padding: EdgeInsets.all(12),
-//                                child: Text("Match count: " + theaterMatches[Index].totalMatch().toString()),
-//                              ),
-//                              Container(
-//                                padding: EdgeInsets.all(12),
-//                                child: Text(theaterMatches[Index].theaterFilmPlot()),
-//                              ),
-//                            ],
-//                          ),
-                        );
-
-                    })),
-
-
-
-          ],
-        ));
+                        ],
+                      ),
+                    ],
+                  );
+                })),
+        FlatButton(
+            child: Text("Go Back"),
+            onPressed: () {
+              Navigator.pop(context);
+            }),
+        FlatButton(
+            child: Text("Home"),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MyHomePage(
+                      )));
+            }),
+      ],
+    ));
   }
 }
