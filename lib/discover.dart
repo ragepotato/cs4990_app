@@ -29,8 +29,8 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
   String filmLength = '< 90 mins';
   @override
   int _selection;
-  double acclaimSlider = 0;
-  double popularitySlider = 0;
+  double acclaimSlider = 1;
+  double popularitySlider = 1;
   var num2;
   var genreSearchList = [];
   String genreText = "Genres: ";
@@ -364,6 +364,13 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
 //                    left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
                       splashColor: Colors.blueAccent,
                       onPressed: () {
+
+
+
+
+
+
+
                         //_saveForm();
                         print('-----------------------------------');
                         //print(_myActivitiesResult);
@@ -380,14 +387,17 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
 
                         print(theaterFilms.length);
                         for (int h = 0; h < theaterFilms.length; h++) {
+                          List theMatches = [];
+                          int totalPossible = 0;
                           print(theaterFilms[h].theaterFilmName());
                           int count = 0;
 
                           if (double.parse(theaterFilms[h].theaterScore()) >= 7.0){
                             count += (acclaimSlider.round() - 1);
+
                             print("Because of acclaim: +" + (acclaimSlider.round() - 1).toString());
                           }
-
+                          totalPossible += (acclaimSlider.round() - 1);
 
                           if (dropdownValues == 'G') {
                             if (theaterFilms[h].theaterFilmRating() == 'G') {
@@ -413,7 +423,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                           }
 
                           else {}
-
+                        totalPossible +=3;
                           if (filmLength == '< 90 mins') {
                             if (theaterFilms[h].theaterFilmLength() <= 90) {
                               count += 2;
@@ -430,19 +440,30 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                               print("Less than 150 mins! +2");
                             }
                           } else {}
+                        totalPossible +=2;
 
+
+                          totalPossible += genreSearchList.length*2;
                           for (int j = 0; j < genreSearchList.length; j++) {
+
                             if (theaterFilms[h]
                                 .theaterFilmGenres()
                                 .contains(genreSearchList[j])) {
                               print(genreSearchList[j] + " is a genre! +2");
                               count += 2;
+                              theMatches.add(genreSearchList[j]);
                             }
                           }
                           theaterFilms[h].setGenreMatchCount(count);
+                          theaterFilms[h].getTotalPossible(totalPossible);
 
                           print("Total count: " +
                               theaterFilms[h].totalMatch().toString());
+
+                          print("Total possible: " + totalPossible.toString());
+
+                          theaterFilms[h].genresThatMatch(theMatches);
+                          print(theaterFilms[h].getGenreResults());
                         }
 
                         theaterFilms.sort(

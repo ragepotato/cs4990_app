@@ -68,7 +68,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
       ref.child(currentUser + "/favoriteMovies/filmName").once().then((ds) {
         ds.value.forEach((k, v) {
-          movieTitle = k;
+          movieTitle = k.replaceAll('%2E', '.');
           movieDate = v['releaseYear'];
           movieSummary = v['summary'];
           moviePosterLink = v['posterPath'];
@@ -256,7 +256,7 @@ class _FavoritesState extends State<FavoritesPage> {
               print(movieScore);
               print(movieGenres);
               ref
-                  .child(currentUser + "/favoriteMovies/filmName/" + movieTitle)
+                  .child(currentUser + "/favoriteMovies/filmName/" + movieTitle.replaceAll('.', '%2E'))
                   .set({
                 "releaseYear": movieDate,
 

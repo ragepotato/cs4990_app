@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final DatabaseReference ref = FirebaseDatabase.instance.reference();
   var currentUser = "Unknown";
   var faveFilmsList = [];
-  String zipString = '78701';
+  String zipString = '33815';
   int totalTime = 0;
   double averageRating = 0.0;
 
@@ -144,8 +144,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       "/" +
                       currentDate +
                       "/" +
-                      resLocation[i]["title"])
-                  .set({
+                      resLocation[i]["title"].replaceAll('.', '%2E'))
+                  .set( {
                 "summary": specResLocation["results"][0]["overview"],
                 "releaseYear": resLocation[i]["releaseYear"].toString(),
                 "posterPath": specResLocation["results"][0]["poster_path"],
@@ -160,11 +160,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 //
               }).then((res) {
+
+               // print(newFilm.theaterFilmGenres());
+
+
+
                 print("ADDED " + resLocation[i]["title"]);
               }).catchError((e) {
                 print("Failed due to " + e);
               });
-
               var newFilm = new theaterMovie(
                   resLocation[i]["title"],
                   specResLocation["results"][0]["overview"],
@@ -177,10 +181,17 @@ class _MyHomePageState extends State<MyHomePage> {
                   specResLocation["results"][0]["vote_average"].toString());
 
               listOfFilmsInTheaters.add(newFilm);
+              print(resLocation[i]["title"]);
+              print("Summary: " + newFilm.theaterFilmPlot());
+              print("releaseYear: " + newFilm.theaterFilmYear());
+              print("posterPath: " + newFilm.theaterFilmPoster());
+              print("genres: " + newFilm.theaterFilmGenres().toString());
+              print("runTime: " + newFilm.theaterFilmLength().toString());
+              print("mpaaRating: " + newFilm.theaterScore());
+              // print("showtimes: " + );
+              print("coverPath: " + newFilm.theaterCover());
+              print("averageRating: " + newFilm.theaterFilmRating());
 
-              //List theaterGenresFixed = getTheaterGenre(resLocation[i]['genres']);
-              print(newFilm.theaterFilmGenres());
-              print("Length: " + newFilm.theaterFilmLength().toString());
             }
             print(
                 "Number of films: " + listOfFilmsInTheaters.length.toString());
@@ -205,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 .then((ds) {
               ds.value.forEach((k, v) {
                 var theFilm = new theaterMovie(
-                    k,
+                    k.replaceAll('%2E', '.'),
                     v['summary'],
                     v['releaseYear'],
                     v['posterPath'],
@@ -369,6 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 faveFilmsList.length.toString());
                             totalTime = 0;
                             averageRating = 0.0;
+
                             bool acclaimMatters = false;
 
                             for (int w = 0; w < faveFilmsList.length; w++) {
@@ -411,11 +423,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             for (int i = 0;
                                 i < listOfFilmsInTheaters.length;
                                 i++) {
+                              int totalPossible = 0;
                               listOfFilmsInTheaters[i].setGenreMatchCount(0);
+
+                              if (acclaimMatters) totalPossible += 2;
 
                               if (acclaimMatters && double.parse(listOfFilmsInTheaters[i].theaterScore()) >= 7.0){
                                 listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
                                 print("We care about acclaim! " + listOfFilmsInTheaters[i].theaterFilmName() + " is acclaimed. + 2");
+
                               }
 
 
@@ -425,11 +441,16 @@ class _MyHomePageState extends State<MyHomePage> {
                                       (averageTime - 15)) {
                                 print(listOfFilmsInTheaters[i].theaterFilmName() + " is within 15 minutes. + 2");
                                 listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
-                              }
 
+                              }
+                              totalPossible += 2;
 
                                 int count = 0;
+
+
+
                               for (int h = 0; h < genreList.length; h++) {
+                                totalPossible += 1;
                                 if (listOfFilmsInTheaters[i]
                                     .theaterFilmGenres()
                                     .contains(genreList[h])) {
@@ -449,6 +470,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                   listOfFilmsInTheaters[i]
                                       .totalMatch()
                                       .toString());
+                              print("Total possible: " + totalPossible.toString());
+                              listOfFilmsInTheaters[i].getTotalPossible(totalPossible);
+
+
                             }
                             listOfFilmsInTheaters.sort((a, b) =>
                                 b.totalMatch().compareTo(a.totalMatch()));
@@ -603,7 +628,7 @@ class _MyHomePageState extends State<MyHomePage> {
         genreName[i] = "Western";
       } else
         genreName[i] = "x";
-      print(genreName[i]);
+      //print(genreName[i]);
     }
 
     return genreName;
@@ -623,6 +648,9 @@ class theaterMovie {
   String filmCover;
   String filmAvgScore;
 
+  int matchPercent;
+  List genreMatches;
+
   //rating, showtimes, coverPath, averageRating
 
   theaterMovie(
@@ -634,7 +662,9 @@ class theaterMovie {
       this.filmLength,
       this.filmRating,
       this.filmCover,
-      this.filmAvgScore) {}
+      this.filmAvgScore) {
+    matchPercent = 0;
+  }
 
   String theaterFilmName() {
     return filmName;
@@ -688,4 +718,23 @@ class theaterMovie {
   String theaterScore() {
     return filmAvgScore;
   }
+
+  void getTotalPossible(int count){
+    matchPercent = ((totalGenreCount / count)* 100).round();
+  }
+
+  int percentMatch(){
+    return matchPercent;
+  }
+
+ void genresThatMatch(List genres){
+    genreMatches = genres;
+ }
+
+ List getGenreResults(){
+    return genreMatches;
+ }
+
+
+
 }
