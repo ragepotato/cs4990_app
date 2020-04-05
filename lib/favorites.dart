@@ -122,294 +122,148 @@ class _FavoritesState extends State<FavoritesPage> {
                 ),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RaisedButton(
+                    child: Text(
+                      "Current Zip Code: " + zipString,
+                      style: GoogleFonts.ubuntu(),
+                    ),
+                    onPressed: () {
+                      zipCodeDialog(context).then((onValue) {
+                        SnackBar zipBar = SnackBar(
+                          content: Text("New Zip Code: " + onValue),
+                        );
 
-
-//
-//            Form(
-//              key: _formKey,
-//              child: new Column(
-//                children: <Widget>[
-//                  Text("Enter Zip Code:"),
-//              TextFormField(
-//                controller: zipCtrl,
-//                decoration: InputDecoration(labelText: " Change Zip Code"),
-//                maxLength: 5,
-//                validator: (value) {
-//                  if (value.isEmpty) {
-//                    return 'Please enter something!';
-//                  }
-//                  if (value.length < 5) {
-//                    return 'Enter valid zipcode';
-//                  }
-//                  return null;
-//                },
-//                onFieldSubmitted: (value) {
-//                  setState(() {
-//                    if (_formKey.currentState.validate()) {
-//                      zipString = zipCtrl.text;
-//                    }
-//                  });
-//                  ref.child(currentUser + "/location/").set({
-//                    "currentZipCode": zipString,
-//                  }).then((res) {
-//                    print("Zip code changed.");
-//                  }).catchError((e) {
-//                    print("Failed due to " + e);
-//                  });
-//                },
-//              ),
-                  RaisedButton(
-                      child: Text("Current Zip Code: " + zipString,style: GoogleFonts.ubuntu(
-                      ), ),
-                      onPressed: () {
-                        zipCodeDialog(context).then((onValue) {
-                          SnackBar zipBar = SnackBar(
-                            content: Text("New Zip Code: " + onValue),
+                        // Scaffold.of(context).showSnackBar(zipBar);
+                      });
+                    }),
+                RaisedButton(
+                    child: Text(
+                      "+ Add a Film",
+                      style: GoogleFonts.ubuntu(),
+                    ),
+                    onPressed: () {
+                      addFilmDialog(context).then((onValue) {
+                        if (onValue != "None") {
+                          SnackBar movieBar = SnackBar(
+                            content: Text("Added " + onValue),
                           );
+                          print("Added film.");
+                          //  Scaffold.of(context).showSnackBar(movieBar);
+                        }
 
-                         // Scaffold.of(context).showSnackBar(zipBar);
-
-                        });
-                      }),
-               // ],
-          //    ),
-        //    ),
-
-            //--------------zipcode-----------------
-
-            new TextField(
-              controller: eCtrl,
-              decoration: InputDecoration(labelText: "   Enter film name here"),
-              //maybe put a flatbutton search onPressed()
-//              onSubmitted: (text) async{
-//
-//              },
+                        //
+                      });
+                    }),
+              ],
             ),
-            FlatButton(
-                child: Text("SEARCH"),
-                onPressed: () async {
-                  String linkText = eCtrl.text.replaceAll(' ', '%20');
-                  String sumText =
-                      'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' +
-                          linkText +
-                          '&page=1&include_adult=false';
-                  print(sumText);
-                  var searchFilmList = [];
-                  var res = await http.get(sumText);
-                  var resSummary = jsonDecode(res.body);
-                  //if (resSummary)
-                  int howMany = min(resSummary['total_results'], 10);
-                  print(howMany);
 
-                  for (int i = 0; i < howMany; i++) {
-                    String yearDate = '';
-                    if (resSummary['results'][i]['release_date'] == null ||
-                        resSummary['results'][i]['release_date'] == "") {
-                      yearDate = '?';
-                    } else {
-                      yearDate = resSummary['results'][i]['release_date']
-                          .substring(
-                              0,
-                              resSummary['results'][i]['release_date']
-                                  .indexOf('-'));
-                    }
-                    searchFilmList.add({
-                      "title": resSummary['results'][i]['title'] +
-                          " (" +
-                          yearDate +
-                          ")",
-                    });
-                    print(i.toString() + ". " + searchFilmList[i]['title']);
-                  }
-                  print(searchFilmList.length);
-
-                  searchNumber = await Navigator.push(
-                      context,
-                      new MaterialPageRoute(
-                        builder: (BuildContext context) => new SearchFilmPage(
-                          listSearch: searchFilmList,
-                        ),
-                        fullscreenDialog: true,
-                      ));
-
-//                  Navigator.push(
-//                    context,
-//                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
-
-                  print(resSummary['results'][searchNumber]['id']);
-                  String resLinkForMovie = "https://api.themoviedb.org/3/movie/" +
-                      resSummary['results'][searchNumber]['id'].toString() +
-                      "?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US";
-                  print(resLinkForMovie);
-                  var resGet = await http.get(resLinkForMovie);
-
-                  var resFullMovie = jsonDecode(resGet.body);
-
-                  movieTitle = resSummary['results'][searchNumber]['title'] +
-                      " (" +
-                      resSummary['results'][searchNumber]['release_date']
-                          .substring(
-                              0,
-                              resSummary['results'][searchNumber]
-                                      ['release_date']
-                                  .indexOf('-')) +
-                      ")";
-                  movieSummary =
-                      resSummary['results'][searchNumber]['overview'];
-                  movieDate = resSummary['results'][searchNumber]
-                          ['release_date']
-                      .substring(
-                          0,
-                          resSummary['results'][searchNumber]['release_date']
-                              .indexOf('-'));
-
-                  movieLength = resFullMovie["runtime"];
-                  movieCover = resFullMovie["backdrop_path"];
-                  movieScore = resFullMovie["vote_average"];
-
-                  moviePosterLink =
-                      resSummary['results'][searchNumber]['poster_path'];
-                  List<dynamic> movieGenres = [];
-                  //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
-                  for (int j = 0;
-                      j <
-                          resSummary['results'][searchNumber]['genre_ids']
-                              .length;
-                      j++) {
-                    String whatGenre = getGenre(
-                        resSummary['results'][searchNumber]['genre_ids'][j]);
-                    print(whatGenre.toString());
-                    movieGenres.add(whatGenre.toString());
-                  }
-                  print(movieTitle);
-                  print(movieSummary);
-                  print(movieDate);
-                  print(movieLength);
-                  print(movieCover);
-                  print(movieScore);
-                  print(movieGenres);
-                  ref
-                      .child(currentUser +
-                          "/favoriteMovies/filmName/" +
-                          movieTitle.replaceAll('.', '%2E'))
-                      .set({
-                    "releaseYear": movieDate,
-
-                    "summary": movieSummary,
-                    "posterPath": moviePosterLink,
-//                "releaseYear": resSummary['results'][searchNumber]
-//                        ['release_date']
-//                    .substring(
-//                        0,
-//                        resSummary['results'][searchNumber]['release_date']
-//                            .indexOf('-')),
-//                "summary": resSummary['results'][searchNumber]['overview'],
-//                "posterPath": resSummary['results'][searchNumber]
-//                    ['poster_path'],
-                    "genres": movieGenres,
-                    "runTime": movieLength,
-                    "coverPath": movieCover,
-                    "averageRating": movieScore,
-
-                    //"genres": movieGenres,
-                  }).then((res) {
-                    print("Movie is added to database.");
-                  }).catchError((e) {
-                    print("Failed due to " + e);
-                  });
-
-                  var theFilm = new filmMovie(
-                      movieTitle,
-                      movieSummary,
-                      movieDate,
-                      moviePosterLink,
-                      movieGenres,
-                      movieLength,
-                      movieCover,
-                      movieScore);
-                  movieSummary = theFilm.getSummary();
-//                print(theFilm.getFilmName());
-//                print(theFilm.getSummary());
-                  litems.add(theFilm);
-                  eCtrl.clear();
-                  print("litems length: " + litems.length.toString());
-                  setState(() {
-                    counter = 1;
-                  });
-                }),
             Expanded(
               child: GridView.builder(
                   padding: EdgeInsets.all(10),
                   gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
                       childAspectRatio: MediaQuery.of(context).size.width /
-                          (MediaQuery.of(context).size.height)),
+                          (MediaQuery.of(context).size.height / .90)),
                   //padding: const EdgeInsets.all(8),
                   itemCount: litems.length,
 //                separatorBuilder: (BuildContext context, int Index) =>
 //                    Divider(),
                   itemBuilder: (BuildContext ctxt, int Index) {
                     return Card(
-                      child: Dismissible(
-                        key: Key(litems[Index].getFilmName()),
-                        onDismissed: (direction) {
-                          // Remove the item from the data source.
+//                      child: Dismissible(
+//                        //key: Key(litems[Index].getFilmName()),
+//                        onDismissed: (direction) {
+//                          // Remove the item from the data source.
+//
+//                          setState(() {
+//                            String removeMovie = litems[Index].getFilmName();
+//                            litems.removeAt(Index);
+//                            //litems.remove(litems[Index].getFilmName());
+//                            ref
+//                                .child(currentUser +
+//                                    "/favoriteMovies/filmName/" +
+//                                    removeMovie.replaceAll('.', '%2E'))
+//                                .remove()
+//                                .then((res) {
+//                              //litems[Index].getFilmName()
+//                              print("Movie is removed from database.");
+//                            }).catchError((e) {
+//                              print("Failed due to " + e);
+//                            });
+//
+//                            counter = 1;
+//                          });
+//                        },
+//                        // Show a red background as the item is swiped away.
+//                        background: Container(color: Colors.red),
 
-                          setState(() {
-                            String removeMovie = litems[Index].getFilmName();
-                            litems.removeAt(Index);
-                            //litems.remove(litems[Index].getFilmName());
-                            ref
-                                .child(currentUser +
-                                    "/favoriteMovies/filmName/" +
-                                    removeMovie.replaceAll('.', '%2E'))
-                                .remove()
-                                .then((res) {
-                              //litems[Index].getFilmName()
-                              print("Movie is removed from database.");
-                            }).catchError((e) {
-                              print("Failed due to " + e);
-                            });
-
-                            counter = 1;
-                          });
-
-                          // Then show a snackbar.
-//                          Scaffold.of(context).showSnackBar(SnackBar(
-//                              content: Text(litems[Index] + " dismissed")));
-                        },
-                        // Show a red background as the item is swiped away.
-                        background: Container(color: Colors.red),
-
-                        child: Column(
-//mainAxisAlignment: MainAxisAlignment.center,
-
-                          children: <Widget>[
-                            Container(
-                              //padding: EdgeInsets.all(10),
-                              height: 175,
-                              decoration: BoxDecoration(
-                                image: new DecorationImage(
-                                  image: NetworkImage(
-                                      "https://image.tmdb.org/t/p/original" +
-                                          litems[Index].getFilmPoster()),
-                                  fit: BoxFit.fill,
-                                  //alignment: FractionalOffset.topCenter,
-                                ),
-                              ),
-                              child: new InkResponse(
-                                onTap: () {
-                                  print(litems[Index].getFilmName());
-                                  movieInfoDialog(context, litems[Index]);
-                                },
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            //padding: EdgeInsets.all(10),
+                            height: MediaQuery.of(context).size.height / 4,
+                            //height: 175,
+                            decoration: BoxDecoration(
+                              image: new DecorationImage(
+                                image: NetworkImage(
+                                    "https://image.tmdb.org/t/p/original" +
+                                        litems[Index].getFilmPoster()),
+                                fit: BoxFit.fill,
+                                //alignment: FractionalOffset.topCenter,
                               ),
                             ),
+                            child: new InkResponse(
+                              onTap: () {
+                                print(litems[Index].getFilmName());
+                                movieInfoDialog(context, litems[Index])
+                                    .then((onValue) {
+                                  if (onValue == "DELETE") {
+                                    setState(() {
+                                      String removeMovie =
+                                          litems[Index].getFilmName();
+                                      litems.removeAt(Index);
+                                      //litems.remove(litems[Index].getFilmName());
+                                      ref
+                                          .child(currentUser +
+                                              "/favoriteMovies/filmName/" +
+                                              removeMovie.replaceAll(
+                                                  '.', '%2E'))
+                                          .remove()
+                                          .then((res) {
+                                        //litems[Index].getFilmName()
+                                        print(
+                                            "Movie is removed from database.");
+                                      }).catchError((e) {
+                                        print("Failed due to " + e);
+                                      });
+                                    });
 
-                            Text(
+//                                                                setState(() {
+
+//
+//                            counter = 1;
+//                          });
+//                        },
+
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: 5),
+                            alignment: Alignment.center,
+                            child: Text(
                               (Index + 1).toString() +
                                   '. ' +
                                   litems[Index].getFilmName(),
+                              style: GoogleFonts.ubuntu(),
+                              textAlign: TextAlign.center,
                             ),
+                          ),
 
 //-----------------------------------------
 //                          ExpansionTile(
@@ -465,10 +319,10 @@ class _FavoritesState extends State<FavoritesPage> {
 //                              //print(_getSummary());
 //                            ],
 //                          ),
-                            //-----------------------------------------
-                          ],
-                        ),
+                          //-----------------------------------------
+                        ],
                       ),
+                      // ),
                     );
                   }),
             ),
@@ -489,51 +343,212 @@ class _FavoritesState extends State<FavoritesPage> {
         ));
   }
 
-  Future<String> zipCodeDialog(BuildContext context) {
-//    TextFormField(
-//      controller: zipCtrl,
-//      decoration: InputDecoration(labelText: " Change Zip Code"),
-//      maxLength: 5,
-//      validator: (value) {
-//        if (value.isEmpty) {
-//          return 'Please enter something!';
-//        }
-//        if (value.length < 5) {
-//          return 'Enter valid zipcode';
-//        }
-//        return null;
-//      },
-//      onFieldSubmitted: (value) {
-//        setState(() {
-//          if (_formKey.currentState.validate()) {
-//            zipString = zipCtrl.text;
-//          }
-//        });
+  Future<String> addFilmDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Add Film", style: GoogleFonts.ubuntu()),
+            content: new TextField(
+              controller: eCtrl,
+              decoration: InputDecoration(labelText: "   Enter film name here"),
+              //maybe put a flatbutton search onPressed()
+//              onSubmitted: (text) async{
+//
+//              },
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                  child: Text(
+                    "GO BACK",
+                    style: GoogleFonts.ubuntu(),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop("None");
+                  }),
+              MaterialButton(
+                  child: Text("SEARCH", style: GoogleFonts.ubuntu()),
+                  onPressed: () async {
+                    String linkText = eCtrl.text.replaceAll(' ', '%20');
+                    String sumText =
+                        'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' +
+                            linkText +
+                            '&page=1&include_adult=false';
+                    print(sumText);
+                    var searchFilmList = [];
+                    var res = await http.get(sumText);
+                    var resSummary = jsonDecode(res.body);
+                    //if (resSummary)
+                    int howMany = min(resSummary['total_results'], 10);
+                    print(howMany);
 
-//      },
-//    ),
+                    for (int i = 0; i < howMany; i++) {
+                      String yearDate = '';
+                      if (resSummary['results'][i]['release_date'] == null ||
+                          resSummary['results'][i]['release_date'] == "") {
+                        yearDate = '?';
+                      } else {
+                        yearDate = resSummary['results'][i]['release_date']
+                            .substring(
+                                0,
+                                resSummary['results'][i]['release_date']
+                                    .indexOf('-'));
+                      }
+                      searchFilmList.add({
+                        "title": resSummary['results'][i]['title'] +
+                            " (" +
+                            yearDate +
+                            ")",
+                      });
+                      print(i.toString() + ". " + searchFilmList[i]['title']);
+                    }
+                    print(searchFilmList.length);
+
+                    searchNumber = await Navigator.push(
+                        context,
+                        new MaterialPageRoute(
+                          builder: (BuildContext context) => new SearchFilmPage(
+                            listSearch: searchFilmList,
+                          ),
+                          fullscreenDialog: true,
+                        ));
+
+//                  Navigator.push(
+//                    context,
+//                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
+
+                    print(resSummary['results'][searchNumber]['id']);
+                    String resLinkForMovie = "https://api.themoviedb.org/3/movie/" +
+                        resSummary['results'][searchNumber]['id'].toString() +
+                        "?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US";
+                    print(resLinkForMovie);
+                    var resGet = await http.get(resLinkForMovie);
+
+                    var resFullMovie = jsonDecode(resGet.body);
+
+                    movieTitle = resSummary['results'][searchNumber]['title'] +
+                        " (" +
+                        resSummary['results'][searchNumber]['release_date']
+                            .substring(
+                                0,
+                                resSummary['results'][searchNumber]
+                                        ['release_date']
+                                    .indexOf('-')) +
+                        ")";
+                    movieSummary =
+                        resSummary['results'][searchNumber]['overview'];
+                    movieDate = resSummary['results'][searchNumber]
+                            ['release_date']
+                        .substring(
+                            0,
+                            resSummary['results'][searchNumber]['release_date']
+                                .indexOf('-'));
+
+                    movieLength = resFullMovie["runtime"];
+                    movieCover = resFullMovie["backdrop_path"];
+                    movieScore = resFullMovie["vote_average"];
+
+                    moviePosterLink =
+                        resSummary['results'][searchNumber]['poster_path'];
+                    List<dynamic> movieGenres = [];
+                    //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
+                    for (int j = 0;
+                        j <
+                            resSummary['results'][searchNumber]['genre_ids']
+                                .length;
+                        j++) {
+                      String whatGenre = getGenre(
+                          resSummary['results'][searchNumber]['genre_ids'][j]);
+                      print(whatGenre.toString());
+                      movieGenres.add(whatGenre.toString());
+                    }
+                    print(movieTitle);
+                    print(movieSummary);
+                    print(movieDate);
+                    print(movieLength);
+                    print(movieCover);
+                    print(movieScore);
+                    print(movieGenres);
+                    ref
+                        .child(currentUser +
+                            "/favoriteMovies/filmName/" +
+                            movieTitle.replaceAll('.', '%2E'))
+                        .set({
+                      "releaseYear": movieDate,
+
+                      "summary": movieSummary,
+                      "posterPath": moviePosterLink,
+//                "releaseYear": resSummary['results'][searchNumber]
+//                        ['release_date']
+//                    .substring(
+//                        0,
+//                        resSummary['results'][searchNumber]['release_date']
+//                            .indexOf('-')),
+//                "summary": resSummary['results'][searchNumber]['overview'],
+//                "posterPath": resSummary['results'][searchNumber]
+//                    ['poster_path'],
+                      "genres": movieGenres,
+                      "runTime": movieLength,
+                      "coverPath": movieCover,
+                      "averageRating": movieScore,
+
+                      //"genres": movieGenres,
+                    }).then((res) {
+                      print("Movie is added to database.");
+                    }).catchError((e) {
+                      print("Failed due to " + e);
+                    });
+
+                    var theFilm = new filmMovie(
+                        movieTitle,
+                        movieSummary,
+                        movieDate,
+                        moviePosterLink,
+                        movieGenres,
+                        movieLength,
+                        movieCover,
+                        movieScore);
+                    movieSummary = theFilm.getSummary();
+//                print(theFilm.getFilmName());
+//                print(theFilm.getSummary());
+                    litems.add(theFilm);
+                    eCtrl.clear();
+                    print("litems length: " + litems.length.toString());
+                    setState(() {
+                      counter = 1;
+                    });
+
+                    Navigator.of(context).pop(movieTitle);
+                  }),
+            ],
+          );
+        });
+  }
+
+  Future<String> zipCodeDialog(BuildContext context) {
     return showDialog(
         context: context,
         builder: (context) {
           final TextEditingController zipCtrl = new TextEditingController();
           return AlertDialog(
-            title: Text("Change Zip Code?"),
+            title: Text("Change Zip Code?", style: GoogleFonts.ubuntu()),
             content: TextField(
               controller: zipCtrl,
             ),
             actions: <Widget>[
-
               MaterialButton(
-                child: Text("GO BACK", style: GoogleFonts.ubuntu(),),
-                onPressed:(){
-                  Navigator.of(context).pop(zipString);
-                }
-
-              ),
-
-
+                  child: Text(
+                    "GO BACK",
+                    style: GoogleFonts.ubuntu(),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(zipString);
+                  }),
               MaterialButton(
-                child: Text("CHANGE", style: GoogleFonts.ubuntu(),),
+                child: Text(
+                  "CHANGE",
+                  style: GoogleFonts.ubuntu(),
+                ),
                 onPressed: () {
                   setState(() {
                     if (_formKey.currentState.validate()) {
@@ -549,7 +564,6 @@ class _FavoritesState extends State<FavoritesPage> {
                     print("Failed due to " + e);
                   });
 
-
                   Navigator.of(context).pop(zipString);
                 },
               ),
@@ -563,31 +577,110 @@ class _FavoritesState extends State<FavoritesPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
+            contentPadding: EdgeInsets.all(0.0),
+            backgroundColor: Color.fromARGB(255, 76, 187, 204),
             content: Card(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    //padding: EdgeInsets.all(20),
-                    height: 200,
-                    decoration: BoxDecoration(
-                      image: new DecorationImage(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Container(
+//                    height: MediaQuery.of(context).size.height /4.15,
+//                    //padding: EdgeInsets.all(20),
+//                    //height: 200,
+//                    decoration: BoxDecoration(
+//                      image: new DecorationImage(
+//                        image: NetworkImage("https://image.tmdb.org/t/p/w500" +
+//                            movie.getFilmCover()),
+//                        fit: BoxFit.fitWidth,
+//                        alignment: FractionalOffset.topCenter,
+//                      ),
+//                    ),
+
+                      child: Image(
                         image: NetworkImage("https://image.tmdb.org/t/p/w500" +
                             movie.getFilmCover()),
-                        fit: BoxFit.fitWidth,
-                        alignment: FractionalOffset.topCenter,
                       ),
                     ),
-                  ),
-                  Container(
-                    //color: Colors.white,
-                    padding: EdgeInsets.all(10),
-                    child: Text(movie.getSummary()),
-                  ),
-                ],
+                    Container(
+                      //color: Colors.white,
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(movie.getFilmName(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.ubuntu(
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    Container(
+                      //color: Colors.white,
+                      padding: EdgeInsets.all(8),
+                      child: Text(" " + movie.getSummary(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.ubuntu()),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: getGenres(movie.getFilmGenres()),
+                    ),
+
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text(
+                            movie
+                                .getLength()
+                                .toString() +
+                                " min",
+                            style: GoogleFonts.ubuntu()),
+                        Text(
+                            "TMDb Score: " +
+                                movie
+                                    .getFilmScore().toString(),
+                            style: GoogleFonts.ubuntu()),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Text("Go Back", style: GoogleFonts.ubuntu()),
+                          onPressed: () {
+                            Navigator.of(context).pop("nah");
+                          },
+                        ),
+                        RaisedButton(
+                          child: Text("Delete Film", style: GoogleFonts.ubuntu(color: Colors.red)),
+                          onPressed: () {
+                            Navigator.of(context).pop("DELETE");
+                          },
+                        ),
+                      ],
+                    ),
+
+
+
+
+                  ],
+                ),
               ),
+
+
             ),
+
           );
         });
+  }
+
+  Widget getGenres(List movieList) {
+    List<Widget> list = new List<Widget>();
+    list.add(new Text("Genres: ", style: GoogleFonts.ubuntu()));
+    for (var i = 0; i < movieList.length; i++) {
+      list.add(new Text(movieList[i], style: GoogleFonts.ubuntu()));
+      if (i != movieList.length - 1) list.add(new Text(", "));
+    }
+    return new Wrap(alignment: WrapAlignment.center, children: list);
   }
 
   String getGenre(int genreID) {

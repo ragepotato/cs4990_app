@@ -183,12 +183,12 @@ class _SearchResultsState extends State<SearchResultsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 RaisedButton(
-                    child: Text("Go Back"),
+                    child: Text("Go Back", style: GoogleFonts.ubuntu()),
                     onPressed: () {
                       Navigator.pop(context);
                     }),
                 RaisedButton(
-                    child: Text("Home"),
+                    child: Text("Home", style: GoogleFonts.ubuntu()),
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -239,7 +239,7 @@ class _SearchResultsState extends State<SearchResultsPage> {
       return new Wrap(children: list);
     } else {
       for (var i = 0; i < allGenres.length; i++) {
-        list.add(new Text(allGenres[i]));
+        list.add(new Text(allGenres[i], style: GoogleFonts.ubuntu()));
         if (i != allGenres.length - 1) list.add(new Text(", "));
       }
       return new Wrap(alignment: WrapAlignment.center, children: list);
