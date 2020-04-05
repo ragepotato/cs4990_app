@@ -134,6 +134,25 @@ class _MyHomePageState extends State<MyHomePage> {
               } else {
                 theRating = resLocation[i]["ratings"][0]["code"];
               }
+              String coverLink = "";
+              if (specResLocation["results"][0]["backdrop_path"] == null){
+                 if(specResLocation["results"][0]["poster_path"] == null){
+                   coverLink = "/k7cS0S3V5nTEHXb0d9SPbc0yCTj.jpg";
+                 }
+                 else{
+                   coverLink = specResLocation["results"][0]["poster_path"];
+                 }
+              }
+              else{
+                coverLink = specResLocation["results"][0]["backdrop_path"];
+              }
+
+
+
+
+
+
+
 
               print("theRating: " + theRating);
 
@@ -153,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 "runTime": resLocation[i]["runTime"],
                 "mpaaRating": theRating,
                 "showtimes": resLocation[i]["showtimes"],
-                "coverPath": specResLocation["results"][0]["backdrop_path"],
+                "coverPath": coverLink,
 
                 "averageRating":
                     specResLocation["results"][0]["vote_average"].toString(),
@@ -177,8 +196,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   getGenre(specResLocation["results"][0]['genre_ids']),
                   resLocation[i]["runTime"],
                   theRating,
-                  specResLocation["results"][0]["backdrop_path"],
-                  specResLocation["results"][0]["vote_average"].toString());
+                  coverLink,
+                  specResLocation["results"][0]["vote_average"].toString(), resLocation[i]["showtimes"]);
 
               listOfFilmsInTheaters.add(newFilm);
               print(resLocation[i]["title"]);
@@ -191,6 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // print("showtimes: " + );
               print("coverPath: " + newFilm.theaterCover());
               print("averageRating: " + newFilm.theaterFilmRating());
+              print("showtimes: " + resLocation[i]["showtimes"].runtimeType.toString());
 
             }
             print(
@@ -224,7 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     v['runTime'],
                     v['mpaaRating'],
                     v['coverPath'],
-                    v['averageRating']);
+                    v['averageRating'], v['showtimes']);
                 listOfFilmsInTheaters.add(theFilm);
               });
 
@@ -259,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
               v['genres'],
               v['runTime'],
               v['coverPath'],
-              v['averageRating']);
+              v['averageRating'].toDouble());
           faveFilmsList.add(theFilm);
         });
 
@@ -420,6 +440,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             var pointCount = sortedMap.values.toList();
                             print(sortedMap);
 
+                            print("1. " + genreList[0]);
+                            print("2. " + genreList[1]);
+                            print("3. " + genreList[2]);
+                            List searchPrefFaveGenres = [];
+                            searchPrefFaveGenres.add(genreList[0]);
+                            searchPrefFaveGenres.add(genreList[1]);
+                            searchPrefFaveGenres.add(genreList[2]);
+
                             for (int i = 0;
                                 i < listOfFilmsInTheaters.length;
                                 i++) {
@@ -486,6 +514,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   builder: (context) => SearchResultsPage(
                                         uid: widget.uid,
                                         listMatches: listOfFilmsInTheaters,
+
+                                        isSearchPreferences: 1,
+                                        favoriteGenres: searchPrefFaveGenres,
                                       )),
                             );
 
@@ -528,7 +559,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print(listOfFilmsInTheaters[0].theaterFilmLength());
-
+                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().toString());
+                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().length.toString());
+                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['dateTime'].toString());
+                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['theatre']['name'].toString());
 //                            Navigator.push(
 //                              context,
 //                              MaterialPageRoute(
@@ -650,6 +684,7 @@ class theaterMovie {
 
   int matchPercent;
   List genreMatches;
+  List showtimeMap;
 
   //rating, showtimes, coverPath, averageRating
 
@@ -662,7 +697,7 @@ class theaterMovie {
       this.filmLength,
       this.filmRating,
       this.filmCover,
-      this.filmAvgScore) {
+      this.filmAvgScore, this.showtimeMap) {
     matchPercent = 0;
   }
 
@@ -734,6 +769,10 @@ class theaterMovie {
  List getGenreResults(){
     return genreMatches;
  }
+
+ List theaterShowtimeMap(){
+    return showtimeMap;
+  }
 
 
 

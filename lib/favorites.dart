@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:math';
 import 'searchFilms.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class FavoritesPage extends StatefulWidget {
   FavoritesPage({Key key, this.uid, this.searchIndex}) : super(key: key);
@@ -36,7 +37,7 @@ class _FavoritesState extends State<FavoritesPage> {
   double movieScore = 0.0;
 
 //----------this is for zipcode
-  final TextEditingController zipCtrl = new TextEditingController();
+  //final TextEditingController zipCtrl = new TextEditingController();
   var searchTheaterList = [];
   int searchChoice = 0;
   var _formKey = GlobalKey<FormState>();
@@ -51,10 +52,7 @@ class _FavoritesState extends State<FavoritesPage> {
 
   void initState() {
     super.initState();
-
-
   }
-
 
   _FavoritesState() {
     _auth.currentUser().then((user) {
@@ -74,7 +72,7 @@ class _FavoritesState extends State<FavoritesPage> {
           moviePosterLink = v['posterPath'];
           movieLength = v['runTime'];
           movieCover = v['coverPath'];
-          movieScore = v['averageRating'];
+          movieScore = v['averageRating'].toDouble();
 
           //movieGenres = (v['genres']);
           var theFilm = new filmMovie(
@@ -106,162 +104,199 @@ class _FavoritesState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
+        backgroundColor: Color.fromARGB(255, 76, 187, 204),
+
 //        appBar: new AppBar(
 //          title: new Text("Hello, $currentUser"),
 //
 //        ),
         body: new Column(
-      children: <Widget>[
+          children: <Widget>[
 //--------------zipcode-----------------
-        Form(
-          key: _formKey,
-          child: new Column(
-            children: <Widget>[
-              Text("Enter Zip Code:"),
-              TextFormField(
-                controller: zipCtrl,
-                decoration: InputDecoration(labelText: " Change Zip Code"),
-                maxLength: 5,
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter something!';
-                  }
-                  if (value.length < 5) {
-                    return 'Enter valid zipcode';
-                  }
-                  return null;
-                },
-                onFieldSubmitted: (value) {
-                  setState(() {
-                    if (_formKey.currentState.validate()) {
-                      zipString = zipCtrl.text;
-                    }
-                  });
-                  ref.child(currentUser + "/location/").set({
-                    "currentZipCode": zipString,
-                  }).then((res) {
-                    print("Zip code changed.");
-                  }).catchError((e) {
-                    print("Failed due to " + e);
-                  });
-                },
+            Container(
+              padding: EdgeInsets.only(left: 15, top: 15, right: 15, bottom: 7),
+              child: Text(
+                "FAVORITE FILMS",
+                style: GoogleFonts.ubuntu(
+                  fontSize: 40,
+                ),
               ),
-              FlatButton(
-                  child: Text("Current Zip Code: " + zipString),
-                  onPressed: () async {}),
-            ],
-          ),
-        ),
+            ),
 
-        //--------------zipcode-----------------
 
-        new TextField(
-          controller: eCtrl,
-          decoration: InputDecoration(labelText: "   Enter film name here"),
-          //maybe put a flatbutton search onPressed()
+//
+//            Form(
+//              key: _formKey,
+//              child: new Column(
+//                children: <Widget>[
+//                  Text("Enter Zip Code:"),
+//              TextFormField(
+//                controller: zipCtrl,
+//                decoration: InputDecoration(labelText: " Change Zip Code"),
+//                maxLength: 5,
+//                validator: (value) {
+//                  if (value.isEmpty) {
+//                    return 'Please enter something!';
+//                  }
+//                  if (value.length < 5) {
+//                    return 'Enter valid zipcode';
+//                  }
+//                  return null;
+//                },
+//                onFieldSubmitted: (value) {
+//                  setState(() {
+//                    if (_formKey.currentState.validate()) {
+//                      zipString = zipCtrl.text;
+//                    }
+//                  });
+//                  ref.child(currentUser + "/location/").set({
+//                    "currentZipCode": zipString,
+//                  }).then((res) {
+//                    print("Zip code changed.");
+//                  }).catchError((e) {
+//                    print("Failed due to " + e);
+//                  });
+//                },
+//              ),
+                  RaisedButton(
+                      child: Text("Current Zip Code: " + zipString,style: GoogleFonts.ubuntu(
+                      ), ),
+                      onPressed: () {
+                        zipCodeDialog(context).then((onValue) {
+                          SnackBar zipBar = SnackBar(
+                            content: Text("New Zip Code: " + onValue),
+                          );
+
+                         // Scaffold.of(context).showSnackBar(zipBar);
+
+                        });
+                      }),
+               // ],
+          //    ),
+        //    ),
+
+            //--------------zipcode-----------------
+
+            new TextField(
+              controller: eCtrl,
+              decoration: InputDecoration(labelText: "   Enter film name here"),
+              //maybe put a flatbutton search onPressed()
 //              onSubmitted: (text) async{
 //
 //              },
-        ),
-        FlatButton(
-            child: Text("SEARCH"),
-            onPressed: () async {
-              String linkText = eCtrl.text.replaceAll(' ', '%20');
-              String sumText =
-                  'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' +
-                      linkText +
-                      '&page=1&include_adult=false';
-              print(sumText);
-              var searchFilmList = [];
-              var res = await http.get(sumText);
-              var resSummary = jsonDecode(res.body);
-              //if (resSummary)
-              int howMany = min(resSummary['total_results'], 10);
-              print(howMany);
+            ),
+            FlatButton(
+                child: Text("SEARCH"),
+                onPressed: () async {
+                  String linkText = eCtrl.text.replaceAll(' ', '%20');
+                  String sumText =
+                      'https://api.themoviedb.org/3/search/movie?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US&query=' +
+                          linkText +
+                          '&page=1&include_adult=false';
+                  print(sumText);
+                  var searchFilmList = [];
+                  var res = await http.get(sumText);
+                  var resSummary = jsonDecode(res.body);
+                  //if (resSummary)
+                  int howMany = min(resSummary['total_results'], 10);
+                  print(howMany);
 
-              for (int i = 0; i < howMany; i++) {
-                String yearDate = '';
-                if (resSummary['results'][i]['release_date'] == null || resSummary['results'][i]['release_date'] == "") {
-                  yearDate = '?';
-                } else {
-                  yearDate = resSummary['results'][i]['release_date'].substring(
-                      0, resSummary['results'][i]['release_date'].indexOf('-'));
-                }
-                searchFilmList.add({
-                  "title":
-                      resSummary['results'][i]['title'] + " (" + yearDate + ")",
-                });
-                print(i.toString() + ". " + searchFilmList[i]['title']);
-              }
-              print(searchFilmList.length);
+                  for (int i = 0; i < howMany; i++) {
+                    String yearDate = '';
+                    if (resSummary['results'][i]['release_date'] == null ||
+                        resSummary['results'][i]['release_date'] == "") {
+                      yearDate = '?';
+                    } else {
+                      yearDate = resSummary['results'][i]['release_date']
+                          .substring(
+                              0,
+                              resSummary['results'][i]['release_date']
+                                  .indexOf('-'));
+                    }
+                    searchFilmList.add({
+                      "title": resSummary['results'][i]['title'] +
+                          " (" +
+                          yearDate +
+                          ")",
+                    });
+                    print(i.toString() + ". " + searchFilmList[i]['title']);
+                  }
+                  print(searchFilmList.length);
 
-              searchNumber = await Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                    builder: (BuildContext context) => new SearchFilmPage(
-                      listSearch: searchFilmList,
-                    ),
-                    fullscreenDialog: true,
-                  ));
+                  searchNumber = await Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                        builder: (BuildContext context) => new SearchFilmPage(
+                          listSearch: searchFilmList,
+                        ),
+                        fullscreenDialog: true,
+                      ));
 
 //                  Navigator.push(
 //                    context,
 //                    MaterialPageRoute(builder: (context) => SearchFilmPage(listSearch: searchFilmList)),);
 
-              print(resSummary['results'][searchNumber]['id']);
-              String resLinkForMovie = "https://api.themoviedb.org/3/movie/" +
-                  resSummary['results'][searchNumber]['id'].toString() +
-                  "?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US";
-              print(resLinkForMovie);
-              var resGet = await http.get(resLinkForMovie);
+                  print(resSummary['results'][searchNumber]['id']);
+                  String resLinkForMovie = "https://api.themoviedb.org/3/movie/" +
+                      resSummary['results'][searchNumber]['id'].toString() +
+                      "?api_key=45d251111f5b70015f4cc65e2b92d0d1&language=en-US";
+                  print(resLinkForMovie);
+                  var resGet = await http.get(resLinkForMovie);
 
-              var resFullMovie = jsonDecode(resGet.body);
+                  var resFullMovie = jsonDecode(resGet.body);
 
-              movieTitle = resSummary['results'][searchNumber]['title'] +
-                  " (" +
-                  resSummary['results'][searchNumber]['release_date'].substring(
-                      0,
+                  movieTitle = resSummary['results'][searchNumber]['title'] +
+                      " (" +
                       resSummary['results'][searchNumber]['release_date']
-                          .indexOf('-')) +
-                  ")";
-              movieSummary = resSummary['results'][searchNumber]['overview'];
-              movieDate = resSummary['results'][searchNumber]['release_date']
-                  .substring(
-                      0,
-                      resSummary['results'][searchNumber]['release_date']
-                          .indexOf('-'));
+                          .substring(
+                              0,
+                              resSummary['results'][searchNumber]
+                                      ['release_date']
+                                  .indexOf('-')) +
+                      ")";
+                  movieSummary =
+                      resSummary['results'][searchNumber]['overview'];
+                  movieDate = resSummary['results'][searchNumber]
+                          ['release_date']
+                      .substring(
+                          0,
+                          resSummary['results'][searchNumber]['release_date']
+                              .indexOf('-'));
 
-              movieLength = resFullMovie["runtime"];
-              movieCover = resFullMovie["backdrop_path"];
-              movieScore = resFullMovie["vote_average"];
+                  movieLength = resFullMovie["runtime"];
+                  movieCover = resFullMovie["backdrop_path"];
+                  movieScore = resFullMovie["vote_average"];
 
-              moviePosterLink =
-                  resSummary['results'][searchNumber]['poster_path'];
-              List<dynamic> movieGenres = [];
-              //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
-              for (int j = 0;
-                  j < resSummary['results'][searchNumber]['genre_ids'].length;
-                  j++) {
-                String whatGenre = getGenre(
-                    resSummary['results'][searchNumber]['genre_ids'][j]);
-                print(whatGenre.toString());
-                movieGenres.add(whatGenre.toString());
+                  moviePosterLink =
+                      resSummary['results'][searchNumber]['poster_path'];
+                  List<dynamic> movieGenres = [];
+                  //movieGenres =resSummary['results'][searchNumber]['genre_ids'];
+                  for (int j = 0;
+                      j <
+                          resSummary['results'][searchNumber]['genre_ids']
+                              .length;
+                      j++) {
+                    String whatGenre = getGenre(
+                        resSummary['results'][searchNumber]['genre_ids'][j]);
+                    print(whatGenre.toString());
+                    movieGenres.add(whatGenre.toString());
+                  }
+                  print(movieTitle);
+                  print(movieSummary);
+                  print(movieDate);
+                  print(movieLength);
+                  print(movieCover);
+                  print(movieScore);
+                  print(movieGenres);
+                  ref
+                      .child(currentUser +
+                          "/favoriteMovies/filmName/" +
+                          movieTitle.replaceAll('.', '%2E'))
+                      .set({
+                    "releaseYear": movieDate,
 
-              }
-              print(movieTitle);
-              print(movieSummary);
-              print(movieDate);
-              print(movieLength);
-              print(movieCover);
-              print(movieScore);
-              print(movieGenres);
-              ref
-                  .child(currentUser + "/favoriteMovies/filmName/" + movieTitle.replaceAll('.', '%2E'))
-                  .set({
-                "releaseYear": movieDate,
-
-                "summary": movieSummary,
-                "posterPath": moviePosterLink,
+                    "summary": movieSummary,
+                    "posterPath": moviePosterLink,
 //                "releaseYear": resSummary['results'][searchNumber]
 //                        ['release_date']
 //                    .substring(
@@ -271,168 +306,288 @@ class _FavoritesState extends State<FavoritesPage> {
 //                "summary": resSummary['results'][searchNumber]['overview'],
 //                "posterPath": resSummary['results'][searchNumber]
 //                    ['poster_path'],
-                "genres": movieGenres,
-                "runTime": movieLength,
-                "coverPath": movieCover,
-                "averageRating": movieScore,
+                    "genres": movieGenres,
+                    "runTime": movieLength,
+                    "coverPath": movieCover,
+                    "averageRating": movieScore,
 
-                //"genres": movieGenres,
-              }).then((res) {
-                print("Movie is added to database.");
-              }).catchError((e) {
-                print("Failed due to " + e);
-              });
+                    //"genres": movieGenres,
+                  }).then((res) {
+                    print("Movie is added to database.");
+                  }).catchError((e) {
+                    print("Failed due to " + e);
+                  });
 
-              var theFilm = new filmMovie(
-                  movieTitle,
-                  movieSummary,
-                  movieDate,
-                  moviePosterLink,
-                  movieGenres,
-                  movieLength,
-                  movieCover,
-                  movieScore);
-              movieSummary = theFilm.getSummary();
+                  var theFilm = new filmMovie(
+                      movieTitle,
+                      movieSummary,
+                      movieDate,
+                      moviePosterLink,
+                      movieGenres,
+                      movieLength,
+                      movieCover,
+                      movieScore);
+                  movieSummary = theFilm.getSummary();
 //                print(theFilm.getFilmName());
 //                print(theFilm.getSummary());
-              litems.add(theFilm);
-              eCtrl.clear();
-              print("litems length: " + litems.length.toString());
-              setState(() {
-                counter = 1;
-              });
-            }),
-        Expanded(
-            child: ListView.builder(
-
-                //padding: const EdgeInsets.all(8),
-                itemCount: litems.length,
+                  litems.add(theFilm);
+                  eCtrl.clear();
+                  print("litems length: " + litems.length.toString());
+                  setState(() {
+                    counter = 1;
+                  });
+                }),
+            Expanded(
+              child: GridView.builder(
+                  padding: EdgeInsets.all(10),
+                  gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      childAspectRatio: MediaQuery.of(context).size.width /
+                          (MediaQuery.of(context).size.height)),
+                  //padding: const EdgeInsets.all(8),
+                  itemCount: litems.length,
 //                separatorBuilder: (BuildContext context, int Index) =>
 //                    Divider(),
-                itemBuilder: (BuildContext ctxt, int Index) {
-                  return Container(
+                  itemBuilder: (BuildContext ctxt, int Index) {
+                    return Card(
+                      child: Dismissible(
+                        key: Key(litems[Index].getFilmName()),
+                        onDismissed: (direction) {
+                          // Remove the item from the data source.
 
-                    child: Dismissible(
-                      key: Key(litems[Index].getFilmName()),
-                      onDismissed: (direction) {
-                        // Remove the item from the data source.
+                          setState(() {
+                            String removeMovie = litems[Index].getFilmName();
+                            litems.removeAt(Index);
+                            //litems.remove(litems[Index].getFilmName());
+                            ref
+                                .child(currentUser +
+                                    "/favoriteMovies/filmName/" +
+                                    removeMovie.replaceAll('.', '%2E'))
+                                .remove()
+                                .then((res) {
+                              //litems[Index].getFilmName()
+                              print("Movie is removed from database.");
+                            }).catchError((e) {
+                              print("Failed due to " + e);
+                            });
 
-                        setState(() {
-                          String removeMovie = litems[Index].getFilmName();
-                          litems.removeAt(Index);
-                          //litems.remove(litems[Index].getFilmName());
-                          ref
-                              .child(currentUser +
-                                  "/favoriteMovies/filmName/" +
-                                  removeMovie)
-                              .remove()
-                              .then((res) {
-                            //litems[Index].getFilmName()
-                            print("Movie is removed from database.");
-                          }).catchError((e) {
-                            print("Failed due to " + e);
+                            counter = 1;
                           });
 
-                          counter = 1;
-                        });
-
-                        // Then show a snackbar.
+                          // Then show a snackbar.
 //                          Scaffold.of(context).showSnackBar(SnackBar(
 //                              content: Text(litems[Index] + " dismissed")));
-                      },
-                      // Show a red background as the item is swiped away.
-                      background: Container(color: Colors.red),
+                        },
+                        // Show a red background as the item is swiped away.
+                        background: Container(color: Colors.red),
 
-                      child: Container(
-                        //color: Colors.lightBlueAccent,
-                        decoration: BoxDecoration(
-                          image: new DecorationImage(
-                            image: NetworkImage(
-                                "https://image.tmdb.org/t/p/original" +
-                                    litems[Index].getFilmCover()),
-                            fit: BoxFit.fitWidth,
-                            alignment: FractionalOffset.topCenter,
-                          ),
-                        ),
-                        child: ExpansionTile(
-//                            onTap: (){
-//                              new Card(
-//                              );
-//                            },
-                          //leading: Icon(Icons.laptop_chromebook),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                "https://image.tmdb.org/t/p/w500" +
-                                    litems[Index].getFilmPoster()),
-                          ),
-
-
-//                          trailing: IconButton(
-//                            onPressed: () {},
-//                            icon: Icon(
-//                              Icons.keyboard_arrow_down,
-//                              color: Colors.white,
-//                            ),
-//
-//                          ),
-                          title: Container(
-
-                            child:Text(
-                            (Index + 1).toString() +
-                                '. ' +
-                                litems[Index].getFilmName(),
-                            style: TextStyle(backgroundColor: Colors.white, fontWeight: FontWeight.bold),
-                          ),),
-
+                        child: Column(
+//mainAxisAlignment: MainAxisAlignment.center,
 
                           children: <Widget>[
-                            Text(""),
-                            Text(""),
-                            Text(""),
-                            Text(""),
-                            Text(""),
-                            Text(""),
-                            Text(""),
                             Container(
-                              color: Colors.white,
-                              child: Column(
-                                children: <Widget>[
-                                  Text("# of Genres: " +
-                                      litems[Index]
-                                          .getFilmGenres()
-                                          .length
-                                          .toString()),
-                                  Container(
-                                    //color: Colors.white,
-                                    padding: EdgeInsets.all(10),
-                                    child: Text(litems[Index].getSummary()),
-                                  ),
-                                ],
+                              //padding: EdgeInsets.all(10),
+                              height: 175,
+                              decoration: BoxDecoration(
+                                image: new DecorationImage(
+                                  image: NetworkImage(
+                                      "https://image.tmdb.org/t/p/original" +
+                                          litems[Index].getFilmPoster()),
+                                  fit: BoxFit.fill,
+                                  //alignment: FractionalOffset.topCenter,
+                                ),
+                              ),
+                              child: new InkResponse(
+                                onTap: () {
+                                  print(litems[Index].getFilmName());
+                                  movieInfoDialog(context, litems[Index]);
+                                },
                               ),
                             ),
 
-                            //print(_getSummary());
+                            Text(
+                              (Index + 1).toString() +
+                                  '. ' +
+                                  litems[Index].getFilmName(),
+                            ),
+
+//-----------------------------------------
+//                          ExpansionTile(
+////                            onTap: (){
+////                              new Card(
+////                              );
+////                            },
+//                            //leading: Icon(Icons.laptop_chromebook),
+//                            leading: CircleAvatar(
+//                              backgroundImage: NetworkImage(
+//                                  "https://image.tmdb.org/t/p/w500" +
+//                                      litems[Index].getFilmPoster()),
+//                            ),
+//
+////                          trailing: IconButton(
+////                            onPressed: () {},
+////                            icon: Icon(
+////                              Icons.keyboard_arrow_down,
+////                              color: Colors.white,
+////                            ),
+////
+////                          ),
+//                            title: Container(
+//                              child: Text(
+//                                (Index + 1).toString() +
+//                                    '. ' +
+//                                    litems[Index].getFilmName(),
+//                                style: TextStyle(
+//                                    backgroundColor: Colors.white,
+//                                    fontWeight: FontWeight.bold),
+//                              ),
+//                            ),
+//
+//                            children: <Widget>[
+//                              Container(
+//                                color: Colors.white,
+//                                child: Column(
+//                                  children: <Widget>[
+//                                    Text("# of Genres: " +
+//                                        litems[Index]
+//                                            .getFilmGenres()
+//                                            .length
+//                                            .toString()),
+//                                    Container(
+//                                      //color: Colors.white,
+//                                      padding: EdgeInsets.all(10),
+//                                      child: Text(litems[Index].getSummary()),
+//                                    ),
+//                                  ],
+//                                ),
+//                              ),
+//
+//                              //print(_getSummary());
+//                            ],
+//                          ),
+                            //-----------------------------------------
                           ],
                         ),
                       ),
+                    );
+                  }),
+            ),
+            RaisedButton(
+              child: Text("SAVE"),
+              onPressed: () {
+                print("MOVING ON---------------");
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MyHomePage(
+                              listOfFaves: litems,
+                              zipCode: zipString,
+                            )));
+              },
+            ),
+          ],
+        ));
+  }
+
+  Future<String> zipCodeDialog(BuildContext context) {
+//    TextFormField(
+//      controller: zipCtrl,
+//      decoration: InputDecoration(labelText: " Change Zip Code"),
+//      maxLength: 5,
+//      validator: (value) {
+//        if (value.isEmpty) {
+//          return 'Please enter something!';
+//        }
+//        if (value.length < 5) {
+//          return 'Enter valid zipcode';
+//        }
+//        return null;
+//      },
+//      onFieldSubmitted: (value) {
+//        setState(() {
+//          if (_formKey.currentState.validate()) {
+//            zipString = zipCtrl.text;
+//          }
+//        });
+
+//      },
+//    ),
+    return showDialog(
+        context: context,
+        builder: (context) {
+          final TextEditingController zipCtrl = new TextEditingController();
+          return AlertDialog(
+            title: Text("Change Zip Code?"),
+            content: TextField(
+              controller: zipCtrl,
+            ),
+            actions: <Widget>[
+
+              MaterialButton(
+                child: Text("GO BACK", style: GoogleFonts.ubuntu(),),
+                onPressed:(){
+                  Navigator.of(context).pop(zipString);
+                }
+
+              ),
+
+
+              MaterialButton(
+                child: Text("CHANGE", style: GoogleFonts.ubuntu(),),
+                onPressed: () {
+                  setState(() {
+                    if (_formKey.currentState.validate()) {
+                      zipString = zipCtrl.text;
+                    }
+                  });
+
+                  ref.child(currentUser + "/location/").set({
+                    "currentZipCode": zipString,
+                  }).then((res) {
+                    print("Zip code changed.");
+                  }).catchError((e) {
+                    print("Failed due to " + e);
+                  });
+
+
+                  Navigator.of(context).pop(zipString);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  movieInfoDialog(BuildContext context, filmMovie movie) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Card(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    //padding: EdgeInsets.all(20),
+                    height: 200,
+                    decoration: BoxDecoration(
+                      image: new DecorationImage(
+                        image: NetworkImage("https://image.tmdb.org/t/p/w500" +
+                            movie.getFilmCover()),
+                        fit: BoxFit.fitWidth,
+                        alignment: FractionalOffset.topCenter,
+                      ),
                     ),
-                  );
-                })),
-        FlatButton(
-          child: Text("SAVE"),
-          onPressed: () {
-            print("MOVING ON---------------");
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => MyHomePage(
-                          listOfFaves: litems,
-                          zipCode: zipString,
-                        )));
-          },
-        ),
-      ],
-    ));
+                  ),
+                  Container(
+                    //color: Colors.white,
+                    padding: EdgeInsets.all(10),
+                    child: Text(movie.getSummary()),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   String getGenre(int genreID) {

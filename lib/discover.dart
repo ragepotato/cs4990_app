@@ -54,6 +54,9 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
             key: formKey,
             child: Column(
               children: <Widget>[
+
+
+
                 Expanded(
                   flex: 8,
                   child: Container(
@@ -113,85 +116,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                       ],
                     )),
 
-//                Expanded(
-//                  flex: 20,
-//                  child: Container(
-//                    padding: EdgeInsets.all(9),
-//                    child: Container(
-//                      color: Colors.white,
-//                      child: MultiSelectFormField(
-//                        autovalidate: false,
-//                        //titleText: 'My workouts',
-//                        titleText: 'Genre',
-//
-//                        validator: (value) {
-//                          if (value == null || value.length == 0) {
-//                            return 'Please select one or more options';
-//                          }
-//                        },
-//                        dataSource: [
-//                          {
-//                            "display": "Action",
-//                            "value": "Action",
-//                          },
-//                          {
-//                            "display": "Comedy",
-//                            "value": "Comedy",
-//                          },
-//                          {
-//                            "display": "Drama",
-//                            "value": "Drama",
-//                          },
-//                          {
-//                            "display": "Family",
-//                            "value": "Family",
-//                          },
-//                          {
-//                            "display": "Horror",
-//                            "value": "Horror",
-//                          },
-//                          {
-//                            "display": "Musical",
-//                            "value": "Musical",
-//                          },
-//                          {
-//                            "display": "Science Fiction",
-//                            "value": "Science Fiction",
-//                          },
-//                          {
-//                            "display": "Mystery",
-//                            "value": "Mystery",
-//                          },
-//                          {
-//                            "display": "Thriller",
-//                            "value": "Thriller",
-//                          },
-//                          {
-//                            "display": "Mystery2",
-//                            "value": "Mystery2",
-//                          },
-//                          {
-//                            "display": "Thriller2",
-//                            "value": "Thriller2",
-//                          },
-//                        ],
-//                        textField: 'display',
-//                        valueField: 'value',
-//                        okButtonLabel: 'OK',
-//                        cancelButtonLabel: 'CANCEL',
-//                        // required: true,
-//                        hintText: 'Please choose one or more',
-//                        value: _myActivities,
-//                        onSaved: (value) {
-//                          if (value == null) return;
-//                          setState(() {
-//                            _myActivities = value;
-//                          });
-//                        },
-//                      ),
-//                    ),
-//                  ),
-//                ),
+
 
                 Expanded(
                   flex: 6,
@@ -479,6 +404,7 @@ class _MyDiscoverState extends State<MyDiscoverPage> {
                               builder: (context) => SearchResultsPage(
                                     uid: widget.uid,
                                     listMatches: theaterFilms,
+                                isSearchPreferences: 2,
                                   )),
                         );
 
