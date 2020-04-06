@@ -533,6 +533,8 @@ class _FavoritesState extends State<FavoritesPage> {
           return AlertDialog(
             title: Text("Change Zip Code?", style: GoogleFonts.ubuntu()),
             content: TextField(
+
+              maxLength: 5,
               controller: zipCtrl,
             ),
             actions: <Widget>[
@@ -551,9 +553,9 @@ class _FavoritesState extends State<FavoritesPage> {
                 ),
                 onPressed: () {
                   setState(() {
-                    if (_formKey.currentState.validate()) {
+
                       zipString = zipCtrl.text;
-                    }
+
                   });
 
                   ref.child(currentUser + "/location/").set({
@@ -619,7 +621,7 @@ class _FavoritesState extends State<FavoritesPage> {
                           style: GoogleFonts.ubuntu()),
                     ),
                     Container(
-                      padding: EdgeInsets.only(bottom: 8),
+                      padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
                       child: getGenres(movie.getFilmGenres()),
                     ),
 

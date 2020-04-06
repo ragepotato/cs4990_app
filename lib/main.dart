@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ref.child(currentUser + "/location/currentZipCode").once().then((ds) {
         if (ds.value == null) {
           ref.child(currentUser + "/location/").set({
-            "currentZipCode": "33602",
+            "currentZipCode": "33815",
           }).then((res) {
             print("Zip code changed.");
           }).catchError((e) {
@@ -547,36 +547,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        FlatButton(
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          disabledColor: Colors.grey,
-                          disabledTextColor: Colors.black,
-                          //padding: EdgeInsets.all(16.0),
 
-                          padding: EdgeInsets.only(
-                              left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
-                          splashColor: Colors.blueAccent,
-                          onPressed: () {
-                            print(listOfFilmsInTheaters[0].theaterFilmLength());
-                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().toString());
-                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().length.toString());
-                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['dateTime'].toString());
-                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['theatre']['name'].toString());
-//                            Navigator.push(
-//                              context,
-//                              MaterialPageRoute(
-//                                  builder: (context) =>
-//                                      TheaterFindPage(uid: widget.uid)),
-//                            );
-                          },
-                          child: Text(
-                            "CHANGE THEATER",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                        Text(""),
-                        FlatButton(
+                        //Text(""),
+                        RaisedButton(
                           color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
@@ -602,6 +575,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                 style: TextStyle(fontSize: 20.0),
                               ),
                             ],
+                          ),
+                        ),
+                        FlatButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          disabledColor: Colors.grey,
+                          disabledTextColor: Colors.black,
+                          //padding: EdgeInsets.all(16.0),
+
+                          padding: EdgeInsets.only(
+                              left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
+                          splashColor: Colors.blueAccent,
+                          onPressed: () {
+
+
+//                            print(listOfFilmsInTheaters[0].theaterFilmLength());
+//                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().toString());
+//                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().length.toString());
+//                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['dateTime'].toString());
+//                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['theatre']['name'].toString());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      openingPage()),
+                            );
+                          },
+                          child: Text(
+                            "SIGN OUT",
+                            style: TextStyle(fontSize: 20.0),
                           ),
                         ),
                         //Text("Hello"),
