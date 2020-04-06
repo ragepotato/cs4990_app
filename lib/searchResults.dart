@@ -104,12 +104,8 @@ class _SearchResultsState extends State<SearchResultsPage> {
                               //child: ,
                             ),
                             ExpansionTile(
-                              leading: Text(
-                                  theaterMatches[Index]
-                                          .percentMatch()
-                                          .toString() +
-                                      '%',
-                                  style: TextStyle(fontSize: 20)),
+                              leading: whichIcon(theaterMatches[Index]),
+
                               title: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
@@ -121,6 +117,11 @@ class _SearchResultsState extends State<SearchResultsPage> {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
+
+
+
+
+
                                     getGenreWidgets(
                                         theaterMatches[Index].getGenreResults(),
                                         theaterMatches[Index]
@@ -294,5 +295,35 @@ class _SearchResultsState extends State<SearchResultsPage> {
     }
     return Column(children: list);
   }
+
+  Widget whichIcon(theaterMovie movie){
+    if (movie.percentMatch() >= 50) {
+      return   Icon(
+        Icons.thumb_up,
+        color: Colors.green,
+        size: 30.0,
+        semanticLabel: 'Recommended',
+      );
+    }
+    else if (movie.percentMatch() >= 30){
+      return Icon(
+        Icons.thumbs_up_down,
+        color: Colors.grey,
+        size: 30.0,
+        semanticLabel: 'Neutral',
+      );
+    }
+    else{
+      return Icon(
+        Icons.thumb_down,
+        color: Colors.red,
+        size: 30.0,
+        semanticLabel: 'Not Recommended',
+      );
+    }
+  }
+
+
+
 }
 

@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import 'favorites.dart';
 import 'discover.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GenreSearchPage extends StatefulWidget {
   GenreSearchPage({Key key, this.myGenreList}) : super(key: key);
@@ -78,8 +79,9 @@ class _GenreSearchState extends State<GenreSearchPage> {
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
+      backgroundColor: Color.fromARGB(255, 76, 187, 204),
       appBar: new AppBar(
-        title: new Text("Hello"),
+        title: new Text("Pick Genres"),
       ),
       body: new Column(
         children: <Widget>[
@@ -88,7 +90,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Action"),
+                  Text("Action", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -101,7 +103,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Adventure"),
+                  Text("Adventure", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -114,7 +116,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Animated"),
+                  Text("Animated", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -135,7 +137,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Comedy"),
+                  Text("Comedy", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -148,7 +150,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Crime"),
+                  Text("Crime", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -161,7 +163,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Documentary"),
+                  Text("Documentary", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -179,7 +181,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Drama"),
+                  Text("Drama", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -192,7 +194,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Family"),
+                  Text("Family", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -205,7 +207,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Fantasy"),
+                  Text("Fantasy", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -223,7 +225,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Horror"),
+                  Text("Horror", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -236,7 +238,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("History"),
+                  Text("History", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -249,7 +251,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Musical"),
+                  Text("Musical", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -270,7 +272,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Mystery"),
+                  Text("Mystery", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -283,7 +285,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Romance"),
+                  Text("Romance", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -296,7 +298,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Science Fiction"),
+                  Text("Science Fiction", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -314,7 +316,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text("Thriller"),
+                  Text("Thriller", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -327,7 +329,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("War"),
+                  Text("War", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -340,7 +342,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text("Western"),
+                  Text("Western", style: GoogleFonts.ubuntu()),
                   Checkbox(
                     onChanged: (bool changed) {
                       setState(() {
@@ -357,9 +359,9 @@ class _GenreSearchState extends State<GenreSearchPage> {
 
 
 
-          FlatButton(
-            color: Colors.white,
-            child: Text("ADD GENRES"),
+          RaisedButton(
+            //color: Colors.white,
+            child: Text("ADD GENRES", style: GoogleFonts.ubuntu()),
             onPressed: () {
               var pickGenres = [];
               if (isAction) pickGenres.add("Action");

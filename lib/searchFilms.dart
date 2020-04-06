@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
 import 'favorites.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchFilmPage extends StatefulWidget {
   SearchFilmPage({Key key, this.listSearch} ) : super(key: key);
@@ -34,19 +35,24 @@ class _SearchFilmState extends State<SearchFilmPage> {
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
+        backgroundColor: Color.fromARGB(255, 76, 187, 204),
         appBar: new AppBar(
-          title: new Text("Hello"),
+          title: new Text("Film Search", style: GoogleFonts.ubuntu()),
+          //backgroundColor: Colors.grey,
         ),
         body: new Column(
           children: <Widget>[
 
-            FlatButton(
-                child: Text("SEARCH"),),
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Text("Pick a Film:", style: GoogleFonts.ubuntu(fontSize: 25)),
+            ),
+
 
 
             Expanded(
                 child: ListView.separated(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(6),
                     itemCount: widget.listSearch.length,
                     separatorBuilder: (BuildContext context, int Index) =>
                         Divider(),
@@ -55,9 +61,9 @@ class _SearchFilmState extends State<SearchFilmPage> {
                         return Container(
 
                           child: Center(
-                              child: FlatButton(
-                                color: Colors.lightBlueAccent,
-                                child: Text(widget.listSearch[Index]['title'],),
+                              child: RaisedButton(
+                                //color: Colors.lightBlueAccent,
+                                child: Text(widget.listSearch[Index]['title'],style: GoogleFonts.ubuntu()),
                                 onPressed: (){
                                   print(widget.listSearch[Index]['title']);
 

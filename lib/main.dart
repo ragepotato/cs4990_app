@@ -1,6 +1,7 @@
 import 'package:cs4990_app/genreSearch.dart';
 import 'package:cs4990_app/theaterFind.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'pulled.dart';
 import 'discover.dart';
@@ -300,32 +301,32 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Color.fromARGB(255, 76, 187, 204),
       // body: new Stack(
 
       body: Stack(
         children: <Widget>[
-          Container(
-            decoration: new BoxDecoration(
-              image: new DecorationImage(
-                //image: new AssetImage("Parasite-poster-2.jpg"),
-                image: new AssetImage("parasite1.jpg"),
-                //image: new AssetImage("parasite1.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: new BackdropFilter(
-              filter: new ImageFilter.blur(
-                sigmaX: 3.0,
-                sigmaY: 3.0,
-              ),
-              child: new Container(
-                decoration: new BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
-                ),
-              ),
-            ),
-          ),
+//          Container(
+//            decoration: new BoxDecoration(
+//              image: new DecorationImage(
+//                //image: new AssetImage("Parasite-poster-2.jpg"),
+//                image: new AssetImage("parasite1.jpg"),
+//                //image: new AssetImage("parasite1.jpg"),
+//                fit: BoxFit.cover,
+//              ),
+//            ),
+//            child: new BackdropFilter(
+//              filter: new ImageFilter.blur(
+//                sigmaX: 3.0,
+//                sigmaY: 3.0,
+//              ),
+//              child: new Container(
+//                decoration: new BoxDecoration(
+//                  color: Colors.black.withOpacity(0.3),
+//                ),
+//              ),
+//            ),
+//          ),
           Center(
             child: Column(
               children: <Widget>[
@@ -341,8 +342,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: EdgeInsets.only(top: 40),
                           child: Text(
                             "SeeNext",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 60.0),
+
+                            style: GoogleFonts.ubuntu(fontSize: 60.0),
                           ),
                         ),
 
@@ -357,7 +358,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        FlatButton(
+                        MaterialButton(
+                          elevation: 5,
+                          minWidth: 230,
+                          height: 70,
                           color: Colors.blue,
                           textColor: Colors.white,
 
@@ -382,10 +386,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           child: Text(
                             "NEW SEARCH",
-                            style: TextStyle(fontSize: 20.0),
+                            style: GoogleFonts.ubuntu(fontSize: 20.0),
                           ),
                         ),
-                        FlatButton(
+                        MaterialButton(
+                          elevation: 5,
+                          minWidth: 230,
+                          height: 70,
                           color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
@@ -526,11 +533,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             children: <Widget>[
                               Text(
                                 "SEARCH BY",
-                                style: TextStyle(fontSize: 20.0),
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                               Text(
                                 "PREFERENCES",
-                                style: TextStyle(fontSize: 20.0),
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                             ],
                           ),
@@ -545,17 +552,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   flex: 30,
                   child: Container(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
 
                         //Text(""),
-                        RaisedButton(
+
+                       MaterialButton(
+                         elevation: 5,
+                         minWidth: 230,
+                          height: 70,
                           color: Colors.blue,
                           textColor: Colors.white,
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
-                          padding: EdgeInsets.only(
-                              left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
+//                          padding: EdgeInsets.only(
+//                              left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             print("Search by preferences activated.");
@@ -571,23 +582,34 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                "EDIT YOUR TASTES",
-                                style: TextStyle(fontSize: 20.0),
+                                "CHANGE FAVORITES",
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
+                              ),
+                              Text(
+                                "OR ZIP CODE",
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                             ],
                           ),
                         ),
-                        FlatButton(
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          disabledColor: Colors.grey,
-                          disabledTextColor: Colors.black,
-                          //padding: EdgeInsets.all(16.0),
 
-                          padding: EdgeInsets.only(
-                              left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
-                          splashColor: Colors.blueAccent,
-                          onPressed: () {
+
+
+
+                            MaterialButton(
+                              elevation: 5,
+                              height: 70,
+                              minWidth: 230,
+                              color: Colors.blue,
+                              textColor: Colors.white,
+                              disabledColor: Colors.grey,
+                              disabledTextColor: Colors.black,
+                              //padding: EdgeInsets.all(16.0),
+
+//                              padding: EdgeInsets.only(
+//                                  left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
+                              splashColor: Colors.blueAccent,
+                              onPressed: () {
 
 
 //                            print(listOfFilmsInTheaters[0].theaterFilmLength());
@@ -595,18 +617,22 @@ class _MyHomePageState extends State<MyHomePage> {
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().length.toString());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['dateTime'].toString());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['theatre']['name'].toString());
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      openingPage()),
-                            );
-                          },
-                          child: Text(
-                            "SIGN OUT",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          openingPage()),
+                                );
+                              },
+                              child: Text(
+                                "SIGN OUT",
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
+                              ),
+                            ),
+
+
+
+
                         //Text("Hello"),
                         //Text("Hello"),
                       ],
