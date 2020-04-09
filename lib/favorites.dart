@@ -87,7 +87,10 @@ class _FavoritesState extends State<FavoritesPage> {
           litems.add(theFilm);
         });
         setState(() {
+          zipString = zipString;
           print("Length: " + litems.length.toString());
+          litems.sort((a, b) => a.getFilmName().compareTo(b.getFilmName()));
+
         });
       }).catchError((e) {
         print("None available for " + currentUser + " --- " + e.toString());
@@ -95,7 +98,7 @@ class _FavoritesState extends State<FavoritesPage> {
     }).catchError((e) {
       print("Failed to get the current user!" + e.toString());
     });
-    litems.sort((a, b) => a.getFilmName().compareTo(b.getFilmName()));
+
     //movieGenres.clear();
   }
 
@@ -448,6 +451,22 @@ class _FavoritesState extends State<FavoritesPage> {
                     movieCover = resFullMovie["backdrop_path"];
                     movieScore = resFullMovie["vote_average"];
 
+                    String coverLink = "";
+                    if (resSummary["results"][searchNumber]["backdrop_path"] == null){
+                      if(resSummary["results"][searchNumber]["poster_path"] == null){
+                        coverLink = "/k7cS0S3V5nTEHXb0d9SPbc0yCTj.jpg";
+                      }
+                      else{
+                        coverLink = resSummary["results"][searchNumber]["poster_path"];
+                      }
+                    }
+                    else{
+                      coverLink = resSummary["results"][searchNumber]["backdrop_path"];
+                    }
+
+
+
+
                     moviePosterLink =
                         resSummary['results'][searchNumber]['poster_path'];
                     List<dynamic> movieGenres = [];
@@ -489,7 +508,7 @@ class _FavoritesState extends State<FavoritesPage> {
 //                    ['poster_path'],
                       "genres": movieGenres,
                       "runTime": movieLength,
-                      "coverPath": movieCover,
+                      "coverPath": coverLink,
                       "averageRating": movieScore,
 
                       //"genres": movieGenres,
@@ -506,7 +525,7 @@ class _FavoritesState extends State<FavoritesPage> {
                         moviePosterLink,
                         movieGenres,
                         movieLength,
-                        movieCover,
+                        coverLink,
                         movieScore);
                     movieSummary = theFilm.getSummary();
 //                print(theFilm.getFilmName());

@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final DatabaseReference ref = FirebaseDatabase.instance.reference();
   var currentUser = "Unknown";
   var faveFilmsList = [];
+  var _isSearchDisabled = false;
   String zipString = '33815';
   int totalTime = 0;
   double averageRating = 0.0;
@@ -136,24 +137,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 theRating = resLocation[i]["ratings"][0]["code"];
               }
               String coverLink = "";
-              if (specResLocation["results"][0]["backdrop_path"] == null){
-                 if(specResLocation["results"][0]["poster_path"] == null){
-                   coverLink = "/k7cS0S3V5nTEHXb0d9SPbc0yCTj.jpg";
-                 }
-                 else{
-                   coverLink = specResLocation["results"][0]["poster_path"];
-                 }
-              }
-              else{
+              if (specResLocation["results"][0]["backdrop_path"] == null) {
+                if (specResLocation["results"][0]["poster_path"] == null) {
+                  coverLink = "/k7cS0S3V5nTEHXb0d9SPbc0yCTj.jpg";
+                } else {
+                  coverLink = specResLocation["results"][0]["poster_path"];
+                }
+              } else {
                 coverLink = specResLocation["results"][0]["backdrop_path"];
               }
-
-
-
-
-
-
-
 
               print("theRating: " + theRating);
 
@@ -165,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       currentDate +
                       "/" +
                       resLocation[i]["title"].replaceAll('.', '%2E'))
-                  .set( {
+                  .set({
                 "summary": specResLocation["results"][0]["overview"],
                 "releaseYear": resLocation[i]["releaseYear"].toString(),
                 "posterPath": specResLocation["results"][0]["poster_path"],
@@ -180,10 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 //
               }).then((res) {
-
-               // print(newFilm.theaterFilmGenres());
-
-
+                // print(newFilm.theaterFilmGenres());
 
                 print("ADDED " + resLocation[i]["title"]);
               }).catchError((e) {
@@ -198,20 +187,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   resLocation[i]["runTime"],
                   theRating,
                   coverLink,
-                  specResLocation["results"][0]["vote_average"].toString(), resLocation[i]["showtimes"]);
+                  specResLocation["results"][0]["vote_average"].toString(),
+                  resLocation[i]["showtimes"]);
 
               listOfFilmsInTheaters.add(newFilm);
-              print(resLocation[i]["title"]);
-              print("Summary: " + newFilm.theaterFilmPlot());
-              print("releaseYear: " + newFilm.theaterFilmYear());
-              print("posterPath: " + newFilm.theaterFilmPoster());
-              print("genres: " + newFilm.theaterFilmGenres().toString());
-              print("runTime: " + newFilm.theaterFilmLength().toString());
-              print("mpaaRating: " + newFilm.theaterScore());
-              // print("showtimes: " + );
-              print("coverPath: " + newFilm.theaterCover());
-              print("averageRating: " + newFilm.theaterFilmRating());
-              print("showtimes: " + resLocation[i]["showtimes"].runtimeType.toString());
+//              print(resLocation[i]["title"]);
+//              print("Summary: " + newFilm.theaterFilmPlot());
+//              print("releaseYear: " + newFilm.theaterFilmYear());
+//              print("posterPath: " + newFilm.theaterFilmPoster());
+//              print("genres: " + newFilm.theaterFilmGenres().toString());
+//              print("runTime: " + newFilm.theaterFilmLength().toString());
+//              print("mpaaRating: " + newFilm.theaterScore());
+//              // print("showtimes: " + );
+//              print("coverPath: " + newFilm.theaterCover());
+//              print("averageRating: " + newFilm.theaterFilmRating());
+//              print("showtimes: " + resLocation[i]["showtimes"].runtimeType.toString());
 
             }
             print(
@@ -245,20 +235,30 @@ class _MyHomePageState extends State<MyHomePage> {
                     v['runTime'],
                     v['mpaaRating'],
                     v['coverPath'],
-                    v['averageRating'], v['showtimes']);
+                    v['averageRating'],
+                    v['showtimes']);
                 listOfFilmsInTheaters.add(theFilm);
               });
 
               print("list of films in theaters length: " +
                   listOfFilmsInTheaters.length.toString());
+
+              _isSearchDisabled = false;
+              print("SEARCH IS ON");
             }).catchError((e) {
+              _isSearchDisabled = true;
+              print("Search1 is disabled.");
               print("LALALALALALALALA " + currentUser + " --- " + e.toString());
             });
           }
         }).catchError((e) {
+          _isSearchDisabled = true;
+          print("Search2 is disabled.");
           print("This failed due to " + e);
         });
       }).catchError((e) {
+        _isSearchDisabled = true;
+        print("Search3 is disabled.");
         print(
             "None available for 22222" + currentUser + " --- " + e.toString());
       });
@@ -287,8 +287,12 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           print("Length: " + faveFilmsList.length.toString());
           print("Done with 2.");
+          _isSearchDisabled = false;
+          print("SEARCH IS ON");
         });
       }).catchError((e) {
+        _isSearchDisabled = true;
+        print("Search4 is disabled.");
         print(
             "None available for 333333" + currentUser + " --- " + e.toString());
       });
@@ -342,8 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: EdgeInsets.only(top: 40),
                           child: Text(
                             "SeeNext",
-
-                            style: GoogleFonts.ubuntu(fontSize: 60.0),
+                            style: GoogleFonts.lobster(fontSize: 60.0),
                           ),
                         ),
 
@@ -359,184 +362,252 @@ class _MyHomePageState extends State<MyHomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         MaterialButton(
-                          elevation: 5,
                           minWidth: 230,
                           height: 70,
-                          color: Colors.blue,
-                          textColor: Colors.white,
+                          elevation: _isSearchDisabled ? 0 : 5,
+                          color: _isSearchDisabled ? Colors.grey : Colors.blue,
+                          textColor:
+                              _isSearchDisabled ? Colors.black : Colors.white,
 
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
                           //padding: EdgeInsets.all(16.0),
 
                           padding: EdgeInsets.only(
-                              left: 54.0, top: 25.0, right: 54.0, bottom: 25.0),
+                              left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () async {
-                            print("New Search activated.");
+                            setState(() {
+                              if (listOfFilmsInTheaters.length == 0) {
+                                _isSearchDisabled = true;
+                              } else {
+                                _isSearchDisabled = false;
+                              }
+                            });
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyDiscoverPage(
-                                        uid: widget.uid,
-                                        theaterMovies: listOfFilmsInTheaters,
-                                      )),
-                            );
+                            if (_isSearchDisabled) {
+                              print("Search is off");
+                              return null;
+                            } else {
+                              print("New Search activated.");
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyDiscoverPage(
+                                          uid: widget.uid,
+                                          theaterMovies: listOfFilmsInTheaters,
+                                        )),
+                              );
+                            }
                           },
-                          child: Text(
-                            "NEW SEARCH",
-                            style: GoogleFonts.ubuntu(fontSize: 20.0),
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                _isSearchDisabled
+                                    ? "No Films"
+                                    : "Search by",
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
+                              ),
+                              Text(
+                                _isSearchDisabled
+                                 ?"At Location" : "New Criteria",
+
+                                style: GoogleFonts.ubuntu(fontSize: 20.0),
+                              ),
+                              ],
                           ),
+
+
+
+
+
+
+
                         ),
                         MaterialButton(
-                          elevation: 5,
                           minWidth: 230,
                           height: 70,
-                          color: Colors.blue,
-                          textColor: Colors.white,
+                          elevation: _isSearchDisabled ? 0 : 5,
+                          color: _isSearchDisabled ? Colors.grey : Colors.blue,
+                          textColor:
+                              _isSearchDisabled ? Colors.black : Colors.white,
                           disabledColor: Colors.grey,
                           disabledTextColor: Colors.black,
                           padding: EdgeInsets.only(
                               left: 50.0, top: 15.0, right: 50.0, bottom: 15.0),
                           splashColor: Colors.blueAccent,
-                          onPressed: () async {
-                            var genreMap = Map();
-                            print("Search by preferences activated.");
-                            print("List length: " +
-                                faveFilmsList.length.toString());
-                            totalTime = 0;
-                            averageRating = 0.0;
+                          onPressed: () {
+                            setState(() {
+                              if (listOfFilmsInTheaters.length == 0 ||
+                                  faveFilmsList.length < 2) {
+                                _isSearchDisabled = true;
+                              } else {
+                                _isSearchDisabled = false;
+                              }
+                            });
 
-                            bool acclaimMatters = false;
+                            if (_isSearchDisabled) {
+                              print("Search is off");
+                              return null;
+                            } else {
+                              var genreMap = Map();
+                              print("Search by preferences activated.");
+                              print("List length: " +
+                                  faveFilmsList.length.toString());
+                              totalTime = 0;
+                              averageRating = 0.0;
 
-                            for (int w = 0; w < faveFilmsList.length; w++) {
-                              averageRating += faveFilmsList[w].getFilmScore();
+                              bool acclaimMatters = false;
 
-                              totalTime += faveFilmsList[w].getLength();
+                              for (int w = 0; w < faveFilmsList.length; w++) {
+                                averageRating +=
+                                    faveFilmsList[w].getFilmScore();
 
-                              faveFilmsList[w]
-                                  .getFilmGenres()
-                                  .forEach((element) {
-                                if (!genreMap.containsKey(element)) {
-                                  genreMap[element] = 1;
-                                } else {
-                                  genreMap[element] += 1;
+                                totalTime += faveFilmsList[w].getLength();
+
+                                faveFilmsList[w]
+                                    .getFilmGenres()
+                                    .forEach((element) {
+                                  if (!genreMap.containsKey(element)) {
+                                    genreMap[element] = 1;
+                                  } else {
+                                    genreMap[element] += 1;
+                                  }
+                                });
+                              }
+
+                              int averageTime =
+                                  (totalTime / faveFilmsList.length).round();
+                              averageRating =
+                                  (averageRating / faveFilmsList.length);
+                              if (averageRating > 7.0) acclaimMatters = true;
+
+                              print("Average time of favorites: " +
+                                  averageTime.toString());
+                              print("Average rating of favorites: " +
+                                  averageRating.toString());
+
+                              var sortedKeys = genreMap.keys
+                                  .toList(growable: false)
+                                    ..sort((k1, k2) =>
+                                        genreMap[k2].compareTo(genreMap[k1]));
+                              LinkedHashMap sortedMap =
+                                  new LinkedHashMap.fromIterable(sortedKeys,
+                                      key: (k) => k, value: (k) => genreMap[k]);
+                              var genreList = sortedMap.keys.toList();
+                              var pointCount = sortedMap.values.toList();
+                              print(sortedMap);
+
+                              print("1. " + genreList[0]);
+                              print("2. " + genreList[1]);
+                              print("3. " + genreList[2]);
+                              List searchPrefFaveGenres = [];
+                              searchPrefFaveGenres.add(genreList[0]);
+                              searchPrefFaveGenres.add(genreList[1]);
+                              searchPrefFaveGenres.add(genreList[2]);
+
+                              for (int i = 0;
+                                  i < listOfFilmsInTheaters.length;
+                                  i++) {
+                                int totalPossible = 0;
+                                listOfFilmsInTheaters[i].setGenreMatchCount(0);
+
+                                if (acclaimMatters) totalPossible += 2;
+
+                                if (acclaimMatters &&
+                                    double.parse(listOfFilmsInTheaters[i]
+                                            .theaterScore()) >=
+                                        7.0) {
+                                  listOfFilmsInTheaters[i].setGenreMatchCount(
+                                      listOfFilmsInTheaters[i].totalMatch() +
+                                          2);
+                                  print("We care about acclaim! " +
+                                      listOfFilmsInTheaters[i]
+                                          .theaterFilmName() +
+                                      " is acclaimed. + 2");
                                 }
-                              });
-                            }
 
-                            int averageTime =
-                                (totalTime / faveFilmsList.length).round();
-                            averageRating = (averageRating / faveFilmsList.length);
-                            if (averageRating > 7.0) acclaimMatters = true;
-
-                            print("Average time of favorites: " +
-                                averageTime.toString());
-                            print("Average rating of favorites: " +
-                                averageRating.toString());
-
-                            var sortedKeys = genreMap.keys
-                                .toList(growable: false)
-                                  ..sort((k1, k2) =>
-                                      genreMap[k2].compareTo(genreMap[k1]));
-                            LinkedHashMap sortedMap =
-                                new LinkedHashMap.fromIterable(sortedKeys,
-                                    key: (k) => k, value: (k) => genreMap[k]);
-                            var genreList = sortedMap.keys.toList();
-                            var pointCount = sortedMap.values.toList();
-                            print(sortedMap);
-
-                            print("1. " + genreList[0]);
-                            print("2. " + genreList[1]);
-                            print("3. " + genreList[2]);
-                            List searchPrefFaveGenres = [];
-                            searchPrefFaveGenres.add(genreList[0]);
-                            searchPrefFaveGenres.add(genreList[1]);
-                            searchPrefFaveGenres.add(genreList[2]);
-
-                            for (int i = 0;
-                                i < listOfFilmsInTheaters.length;
-                                i++) {
-                              int totalPossible = 0;
-                              listOfFilmsInTheaters[i].setGenreMatchCount(0);
-
-                              if (acclaimMatters) totalPossible += 2;
-
-                              if (acclaimMatters && double.parse(listOfFilmsInTheaters[i].theaterScore()) >= 7.0){
-                                listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
-                                print("We care about acclaim! " + listOfFilmsInTheaters[i].theaterFilmName() + " is acclaimed. + 2");
-
-                              }
-
-
-                              if (listOfFilmsInTheaters[i].theaterFilmLength() <=
-                                      (averageTime + 15) &&
-                                  listOfFilmsInTheaters[i].theaterFilmLength() >=
-                                      (averageTime - 15)) {
-                                print(listOfFilmsInTheaters[i].theaterFilmName() + " is within 15 minutes. + 2");
-                                listOfFilmsInTheaters[i].setGenreMatchCount(listOfFilmsInTheaters[i].totalMatch() + 2);
-
-                              }
-                              totalPossible += 2;
+                                if (listOfFilmsInTheaters[i]
+                                            .theaterFilmLength() <=
+                                        (averageTime + 15) &&
+                                    listOfFilmsInTheaters[i]
+                                            .theaterFilmLength() >=
+                                        (averageTime - 15)) {
+                                  print(listOfFilmsInTheaters[i]
+                                          .theaterFilmName() +
+                                      " is within 15 minutes. + 2");
+                                  listOfFilmsInTheaters[i].setGenreMatchCount(
+                                      listOfFilmsInTheaters[i].totalMatch() +
+                                          2);
+                                }
+                                totalPossible += 2;
 
                                 int count = 0;
 
-
-
-                              for (int h = 0; h < genreList.length; h++) {
-                                totalPossible += 1;
-                                if (listOfFilmsInTheaters[i]
-                                    .theaterFilmGenres()
-                                    .contains(genreList[h])) {
-                                  print(genreList[h] + " is a genre! +" + pointCount[h].toString());
-                                  count += pointCount[h];
+                                for (int h = 0; h < genreList.length; h++) {
+                                  totalPossible += 1;
+                                  if (listOfFilmsInTheaters[i]
+                                      .theaterFilmGenres()
+                                      .contains(genreList[h])) {
+                                    print(genreList[h] +
+                                        " is a genre! +" +
+                                        pointCount[h].toString());
+                                    count += pointCount[h];
+                                  }
                                 }
+
+                                listOfFilmsInTheaters[i].setGenreMatchCount(
+                                    count +
+                                        listOfFilmsInTheaters[i].totalMatch());
+                                print(
+                                    listOfFilmsInTheaters[i].theaterFilmName() +
+                                        ": " +
+                                        listOfFilmsInTheaters[i]
+                                            .theaterFilmLength()
+                                            .toString());
+                                print("Total count: " +
+                                    listOfFilmsInTheaters[i]
+                                        .totalMatch()
+                                        .toString());
+                                print("Total possible: " +
+                                    totalPossible.toString());
+                                listOfFilmsInTheaters[i]
+                                    .getTotalPossible(totalPossible);
                               }
+                              listOfFilmsInTheaters.sort((a, b) =>
+                                  b.totalMatch().compareTo(a.totalMatch()));
+                              print("Highest match: " +
+                                  listOfFilmsInTheaters[0].theaterFilmName());
 
-                              listOfFilmsInTheaters[i]
-                                  .setGenreMatchCount(count + listOfFilmsInTheaters[i].totalMatch());
-                              print(listOfFilmsInTheaters[i].theaterFilmName() +
-                                  ": " +
-                                  listOfFilmsInTheaters[i]
-                                      .theaterFilmLength()
-                                      .toString());
-                              print("Total count: " +
-                                  listOfFilmsInTheaters[i]
-                                      .totalMatch()
-                                      .toString());
-                              print("Total possible: " + totalPossible.toString());
-                              listOfFilmsInTheaters[i].getTotalPossible(totalPossible);
-
-
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchResultsPage(
+                                          uid: widget.uid,
+                                          listMatches: listOfFilmsInTheaters,
+                                          isSearchPreferences: 1,
+                                          favoriteGenres: searchPrefFaveGenres,
+                                        )),
+                              );
+                              ;
+                              setState(() {
+                                // _NoSearchPress();print(_isSearchDisabled);
+                              });
                             }
-                            listOfFilmsInTheaters.sort((a, b) =>
-                                b.totalMatch().compareTo(a.totalMatch()));
-                            print("Highest match: " +
-                                listOfFilmsInTheaters[0].theaterFilmName());
 
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchResultsPage(
-                                        uid: widget.uid,
-                                        listMatches: listOfFilmsInTheaters,
-
-                                        isSearchPreferences: 1,
-                                        favoriteGenres: searchPrefFaveGenres,
-                                      )),
-                            );
-
-                            setState(() {});
+                            //_isSearchDisabled ? null : print(_isSearchDisabled);
                           },
                           child: Column(
                             children: <Widget>[
                               Text(
-                                "SEARCH BY",
+                                _isSearchDisabled
+                                    ? "No Available"
+                                    : "Search by",
                                 style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                               Text(
-                                "PREFERENCES",
+                                _isSearchDisabled ? "Films" : "Preferences",
                                 style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                             ],
@@ -554,12 +625,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-
                         //Text(""),
 
-                       MaterialButton(
-                         elevation: 5,
-                         minWidth: 230,
+                        MaterialButton(
+                          elevation: 5,
+                          minWidth: 230,
                           height: 70,
                           color: Colors.blue,
                           textColor: Colors.white,
@@ -582,56 +652,47 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                "CHANGE FAVORITES",
+                                "Change Favorites",
                                 style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                               Text(
-                                "OR ZIP CODE",
+                                "or Zip Code",
                                 style: GoogleFonts.ubuntu(fontSize: 20.0),
                               ),
                             ],
                           ),
                         ),
 
-
-
-
-                            MaterialButton(
-                              elevation: 5,
-                              height: 70,
-                              minWidth: 230,
-                              color: Colors.blue,
-                              textColor: Colors.white,
-                              disabledColor: Colors.grey,
-                              disabledTextColor: Colors.black,
-                              //padding: EdgeInsets.all(16.0),
+                        MaterialButton(
+                          elevation: 5,
+                          height: 70,
+                          minWidth: 230,
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          disabledColor: Colors.grey,
+                          disabledTextColor: Colors.black,
+                          //padding: EdgeInsets.all(16.0),
 
 //                              padding: EdgeInsets.only(
 //                                  left: 52.5, top: 15.0, right: 52.5, bottom: 15.0),
-                              splashColor: Colors.blueAccent,
-                              onPressed: () {
-
-
+                          splashColor: Colors.blueAccent,
+                          onPressed: () {
 //                            print(listOfFilmsInTheaters[0].theaterFilmLength());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().toString());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap().length.toString());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['dateTime'].toString());
 //                            print(listOfFilmsInTheaters[0].theaterShowtimeMap()[0]['theatre']['name'].toString());
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          openingPage()),
-                                );
-                              },
-                              child: Text(
-                                "SIGN OUT",
-                                style: GoogleFonts.ubuntu(fontSize: 20.0),
-                              ),
-                            ),
-
-
-
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => openingPage()),
+                            );
+                          },
+                          child: Text(
+                            "Sign Out",
+                            style: GoogleFonts.ubuntu(fontSize: 20.0),
+                          ),
+                        ),
 
                         //Text("Hello"),
                         //Text("Hello"),
@@ -696,6 +757,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return genreName;
   }
+
+  Function _NoSearchPress() {
+    if (_isSearchDisabled) {
+      print("Can't search");
+      return null;
+    } else {
+      print("SEARCHING");
+
+      return () async {};
+    }
+  }
 }
 
 class theaterMovie {
@@ -726,7 +798,8 @@ class theaterMovie {
       this.filmLength,
       this.filmRating,
       this.filmCover,
-      this.filmAvgScore, this.showtimeMap) {
+      this.filmAvgScore,
+      this.showtimeMap) {
     matchPercent = 0;
   }
 
@@ -783,26 +856,23 @@ class theaterMovie {
     return filmAvgScore;
   }
 
-  void getTotalPossible(int count){
-    matchPercent = ((totalGenreCount / count)* 100).round();
+  void getTotalPossible(int count) {
+    matchPercent = ((totalGenreCount / count) * 100).round();
   }
 
-  int percentMatch(){
+  int percentMatch() {
     return matchPercent;
   }
 
- void genresThatMatch(List genres){
+  void genresThatMatch(List genres) {
     genreMatches = genres;
- }
-
- List getGenreResults(){
-    return genreMatches;
- }
-
- List theaterShowtimeMap(){
-    return showtimeMap;
   }
 
+  List getGenreResults() {
+    return genreMatches;
+  }
 
-
+  List theaterShowtimeMap() {
+    return showtimeMap;
+  }
 }
