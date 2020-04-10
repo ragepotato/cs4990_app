@@ -63,7 +63,7 @@ class _SearchFilmState extends State<SearchFilmPage> {
                           child: Center(
                               child: RaisedButton(
                                 //color: Colors.lightBlueAccent,
-                                child: Text(widget.listSearch[Index]['title'],style: GoogleFonts.ubuntu()),
+                                child: Text(widget.listSearch[Index]['title'],style: GoogleFonts.ubuntu(fontSize: 15), textAlign: TextAlign.center,),
                                 onPressed: (){
                                   print(widget.listSearch[Index]['title']);
 

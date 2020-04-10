@@ -15,13 +15,12 @@ import 'package:google_fonts/google_fonts.dart';
 class GenreSearchPage extends StatefulWidget {
   GenreSearchPage({Key key, this.myGenreList}) : super(key: key);
   final List myGenreList;
+
   @override
   _GenreSearchState createState() => _GenreSearchState();
 }
 
 class _GenreSearchState extends State<GenreSearchPage> {
-
-
   final TextEditingController eCtrl = new TextEditingController();
 
   bool isAction = false;
@@ -54,7 +53,7 @@ class _GenreSearchState extends State<GenreSearchPage> {
     if (widget.myGenreList.contains("Crime drama")) isCrime = true;
     if (widget.myGenreList.contains("Documentary")) isDocumentary = true;
     if (widget.myGenreList.contains("Drama")) isDrama = true;
-    if (widget.myGenreList.contains("Family")) isFamily= true;
+    if (widget.myGenreList.contains("Family")) isFamily = true;
     if (widget.myGenreList.contains("Fantasy")) isFantasy = true;
     if (widget.myGenreList.contains("Horror")) isHorror = true;
     if (widget.myGenreList.contains("History")) isHistory = true;
@@ -63,19 +62,14 @@ class _GenreSearchState extends State<GenreSearchPage> {
     if (widget.myGenreList.contains("Romance")) isRomance = true;
     if (widget.myGenreList.contains("Science fiction")) isSciFi = true;
     if (widget.myGenreList.contains("Thriller")) isThriller = true;
-    if (widget.myGenreList.contains("War"))  isWar = true;
-    if (widget.myGenreList.contains("Western"))  isWestern = true;
+    if (widget.myGenreList.contains("War")) isWar = true;
+    if (widget.myGenreList.contains("Western")) isWestern = true;
   }
-
-
 
   _GenreSearchState() {
-
     //setState(() {  });
-
-
-
   }
+
   @override
   Widget build(BuildContext ctxt) {
     return new Scaffold(
@@ -84,284 +78,350 @@ class _GenreSearchState extends State<GenreSearchPage> {
         title: new Text("Pick Genres"),
       ),
       body: new Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text("Action", style: GoogleFonts.ubuntu(fontSize: 18)),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isAction = changed;
+                          });
+                        },
+                        value: isAction,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text("Adventure",
+                          style: GoogleFonts.ubuntu(fontSize: 18)),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isAdventure = changed;
+                          });
+                        },
+                        value: isAdventure,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text("Animated", style: GoogleFonts.ubuntu(fontSize: 18)),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isAnimated = changed;
+                          });
+                        },
+                        value: isAnimated,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        "Comedy",
+                        style: GoogleFonts.ubuntu(fontSize: 18),
+                      ),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isComedy = changed;
+                          });
+                        },
+                        value: isComedy,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text("Crime", style: GoogleFonts.ubuntu(fontSize: 18)),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isCrime = changed;
+                          });
+                        },
+                        value: isCrime,
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Text("Documentary",
+                          style: GoogleFonts.ubuntu(fontSize: 18)),
+                      Checkbox(
+                        onChanged: (bool changed) {
+                          setState(() {
+                            isDocumentary = changed;
+                          });
+                        },
+                        value: isDocumentary,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+    Container(
+    padding: EdgeInsets.only(left: 15, right: 15),
+    child:Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Action", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isAction = changed;
-                      });
-                    },
-                    value: isAction,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Drama", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isDrama = changed;
+                        });
+                      },
+                      value: isDrama,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Adventure", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isAdventure = changed;
-                      });
-                    },
-                    value: isAdventure,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Family", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isFamily = changed;
+                        });
+                      },
+                      value: isFamily,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Animated", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isAnimated = changed;
-                      });
-                    },
-                    value: isAnimated,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Fantasy", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isFantasy = changed;
+                        });
+                      },
+                      value: isFantasy,
+                    ),
+                  ],
+                ),
               ),
             ],
-
-          ),
-
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ),),
+    Container(
+    padding: EdgeInsets.only(left: 15, right: 15),
+    child:Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Comedy", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isComedy = changed;
-                      });
-                    },
-                    value: isComedy,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Horror", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isHorror = changed;
+                        });
+                      },
+                      value: isHorror,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Crime", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isCrime = changed;
-                      });
-                    },
-                    value: isCrime,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("History", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isHistory = changed;
+                        });
+                      },
+                      value: isHistory,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Documentary", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isDocumentary = changed;
-                      });
-                    },
-                    value: isDocumentary,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Musical", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isMusical = changed;
+                        });
+                      },
+                      value: isMusical,
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ),),
+    Container(
+    padding: EdgeInsets.only(left: 15, right: 15),
+    child:Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Drama", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isDrama = changed;
-                      });
-                    },
-                    value: isDrama,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Mystery", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isMystery = changed;
+                        });
+                      },
+                      value: isMystery,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Family", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isFamily = changed;
-                      });
-                    },
-                    value: isFamily,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Romance", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isRomance = changed;
+                        });
+                      },
+                      value: isRomance,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Fantasy", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isFantasy = changed;
-                      });
-                    },
-                    value: isFantasy,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Science Fiction",
+                        style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isSciFi = changed;
+                        });
+                      },
+                      value: isSciFi,
+                    ),
+                  ],
+                ),
               ),
             ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ),),
+    Container(
+    padding: EdgeInsets.only(left: 15, right: 15),
+    child:Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Horror", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isHorror = changed;
-                      });
-                    },
-                    value: isHorror,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Thriller", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isThriller = changed;
+                        });
+                      },
+                      value: isThriller,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("History", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isHistory = changed;
-                      });
-                    },
-                    value: isHistory,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("War", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isWar = changed;
+                        });
+                      },
+                      value: isWar,
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                children: <Widget>[
-                  Text("Musical", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isMusical = changed;
-                      });
-                    },
-                    value: isMusical,
-                  ),
-                ],
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: <Widget>[
+                    Text("Western", style: GoogleFonts.ubuntu(fontSize: 18)),
+                    Checkbox(
+                      onChanged: (bool changed) {
+                        setState(() {
+                          isWestern = changed;
+                        });
+                      },
+                      value: isWestern,
+                    ),
+                  ],
+                ),
               ),
             ],
-
-          ),
-
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Mystery", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isMystery = changed;
-                      });
-                    },
-                    value: isMystery,
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("Romance", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isRomance = changed;
-                      });
-                    },
-                    value: isRomance,
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("Science Fiction", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isSciFi = changed;
-                      });
-                    },
-                    value: isSciFi,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text("Thriller", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isThriller = changed;
-                      });
-                    },
-                    value: isThriller,
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("War", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isWar = changed;
-                      });
-                    },
-                    value: isWar,
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text("Western", style: GoogleFonts.ubuntu()),
-                  Checkbox(
-                    onChanged: (bool changed) {
-                      setState(() {
-                        isWestern = changed;
-                      });
-                    },
-                    value: isWestern,
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-
-
-
+          ),),
           RaisedButton(
             //color: Colors.white,
-            child: Text("ADD GENRES", style: GoogleFonts.ubuntu()),
+            child: Text("Add Genres", style: GoogleFonts.ubuntu(fontSize: 20)),
+            padding: EdgeInsets.all(13),
             onPressed: () {
               var pickGenres = [];
               if (isAction) pickGenres.add("Action");
@@ -386,9 +446,6 @@ class _GenreSearchState extends State<GenreSearchPage> {
               print(pickGenres);
               Navigator.pop(context, pickGenres);
             },
-
-
-
           ),
         ],
       ),

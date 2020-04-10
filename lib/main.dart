@@ -346,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           margin: EdgeInsets.only(top: 40),
                           child: Text(
                             "SeeNext",
-                            style: GoogleFonts.lobster(fontSize: 60.0),
+                            style: GoogleFonts.lobster(fontSize: 75.0),
                           ),
                         ),
 

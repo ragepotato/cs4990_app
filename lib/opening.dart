@@ -27,138 +27,139 @@ class _openingState extends State<openingPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Color.fromARGB(255, 76, 187, 204),
         body: Builder(builder: (context) {
-          return new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
+          return
 
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "SeeNext",
-                      style: GoogleFonts.ubuntu(fontSize: 70),
-                    ),
-                  ],
+
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "SeeNext",
+                        style: GoogleFonts.lobster(fontSize: 75.0),
+                      ),
+                    ],
+                  ),
                 ),
-
-
-
-
-              ),
-
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                Flexible(
+                  flex: 2,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "E-mail: ",
-                        style: GoogleFonts.ubuntu(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "E-mail: ",
+                            style: GoogleFonts.ubuntu(),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 30),
+                            width: 320,
+                            child: TextField(
+                              style: GoogleFonts.ubuntu(),
+                              controller: emailController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                labelText: 'E-mail',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(""),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                            "Password: ",
+                            style: GoogleFonts.ubuntu(),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(right: 30),
+                            width: 320,
+                            child: TextField(
+                              style: GoogleFonts.ubuntu(),
+                              controller: passController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(),
+                                labelText: 'Password',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Container(
-                        padding: EdgeInsets.only(right: 30),
-                        width: 320,
-                        child: TextField(
-                          style: GoogleFonts.ubuntu(),
-                          controller: emailController,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(),
-                            labelText: 'E-mail',
+                        padding: EdgeInsets.all(7),
+                        child: Wrap(children: <Widget>[
+                          Text(
+                            signinError,
+                            style: GoogleFonts.ubuntu(color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
+
+                        ],),
+                      ),
+                      RaisedButton(
+                        child: Text("Sign-In"),
+                        onPressed: () {
+                          print("Pressed1.");
+                          _auth
+                              .signInWithEmailAndPassword(
+                                  email: emailController.text.toString(),
+                                  password: passController.text.toString())
+                              .then((value) {
+                            print("Successful! " + value.user.uid);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      MyHomePage(uid: value.user.uid)),
+                            );
+                          }).catchError((e) {
+                            print("Failed to Login! " + e.toString());
+                            setState(() {
+                              signinError = e
+                                  .toString()
+                                  .replaceAll("PlatformException", "");
+                            });
+                          });
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text("Don't have an account? Sign Up"),
+                        onPressed: () {
+                          createAccountDialog(context).then((onValue) {
+                            if (onValue == "Success") {
+                              //  SnackBar movieBar =
+
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                content: new Text("Success! Account created."),
+                              ));
+                            }
+
+                            //
+                          });
+                        },
                       ),
                     ],
                   ),
-                  Text(""),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Text(
-                        "Password: ",
-                        style: GoogleFonts.ubuntu(),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(right: 30),
-                        width: 320,
-                        child: TextField(
-                          style: GoogleFonts.ubuntu(),
-                          controller: passController,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            border: OutlineInputBorder(),
-                            labelText: 'Password',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(7),
-                    child: Text(
-                      signinError,
-                      style: GoogleFonts.ubuntu(color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  RaisedButton(
-                    child: Text("Sign-In"),
-                    onPressed: () {
-                      print("Pressed1.");
-                      _auth
-                          .signInWithEmailAndPassword(
-                          email: emailController.text.toString(),
-                          password: passController.text.toString())
-                          .then((value) {
-                        print("Successful! " + value.user.uid);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHomePage(uid: value.user.uid)),
-                        );
-                      }).catchError((e) {
-                        print("Failed to Login! " + e.toString());
-                        setState(() {
-                          signinError =
-                              e.toString().replaceAll("PlatformException", "");
-                        });
-                      });
-                    },
-                  ),
-                  RaisedButton(
-                    child: Text("Don't have an account? Sign Up"),
-                    onPressed: () {
-                      createAccountDialog(context).then((onValue) {
-                        if (onValue == "Success") {
-                          //  SnackBar movieBar =
+                ),
+              ],
+            );
 
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                            content: new Text("Success! Account created."),
-                          ));
-                        }
-
-                        //
-                      });
-                    },
-                  ),
-
-                ],),
-              ),
-
-            ],
-          );
         }));
   }
 

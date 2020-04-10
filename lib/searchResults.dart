@@ -165,10 +165,15 @@ class _SearchResultsState extends State<SearchResultsPage> {
                                       padding: EdgeInsets.only(top: 8),
                                       child: Text("Showing Today:", style: GoogleFonts.ubuntu()),
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.all(5),
-                                      child: showtimeDisplay(theaterMatches[Index].theaterShowtimeMap()),
-                                    ),
+
+
+                                        Container(
+                                          padding: EdgeInsets.all(5),
+                                          child: showtimeDisplay(theaterMatches[Index].theaterShowtimeMap()),
+                                        ),
+
+
+
 
 
 
@@ -290,10 +295,10 @@ class _SearchResultsState extends State<SearchResultsPage> {
   Widget showtimeDisplay(List showTimes) {  //listOfFilmsInTheaters[0].theaterShowtimeMap()
     List<Widget> list = new List<Widget>();
     for (int i = 0; i < showTimes.length; i++){
-      list.add(new Container( padding: EdgeInsets.all(4), child: new Text(showTimes[i]['dateTime'].toString() + " - " + showTimes[i]['theatre']['name'].toString(), style: GoogleFonts.ubuntu()) ));
+      list.add(new Container( padding: EdgeInsets.all(4), child: new Text(showTimes[i]['dateTime'].toString() + " - " + showTimes[i]['theatre']['name'].toString(), style: GoogleFonts.ubuntu(),textAlign: TextAlign.center,) ));
       //list.add(new Container( padding: EdgeInsets.all(3), child: new Text(showTimes[i]['dateTime'].toString() + " - " + showTimes[i]['theatre']['name'].toString(), style: GoogleFonts.ubuntu()) ));
     }
-    return Column(children: list);
+    return Column( children: list);
   }
 
   Widget whichIcon(theaterMovie movie){
