@@ -1,6 +1,7 @@
 # cs4990_app
 
-CS 4990 Flutter Project.
+CS 4990 Flutter Project - SeeNext
+Finds the best movie for you to watch at your local theater. Asks for your location and a list of movie preferences (genre, length, popularity, etc.) or some of the movies that you like, uses this information to find the movie at your cinema that best matches your choices.
 
 ## Getting Started
 
